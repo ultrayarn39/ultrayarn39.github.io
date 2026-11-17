@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>情深叉喔每日-短剧片段更新与追剧日历</title>
+<meta name="description" content="情深叉喔每日整理短剧逐集片段、更新时间与追剧日历，收录角色线梳理、名场面回看、配音配乐清单和观众讨论。每天跟进当日更新集数与剧情节点，帮观众按时间线补剧、避开剧透，也能查到跨平台播出版本差异。">
+<meta name="keywords" content="情深叉喔每日">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23b02a4b'/%3E%3Cpath d='M9 21c3-8 11-8 14 0' stroke='%23fff' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='11' r='3' fill='%23f6d7a7'/%3E%3C/svg%3E">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"情深叉喔每日","description":"短剧逐集片段、更新时间与追剧日历整理","inLanguage":"zh-CN"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"情深叉喔每日的更新节奏是怎样的","acceptedAnswer":{"@type":"Answer","text":"正片在每周二、周四、周六20:00各放一集，周日加更一段番外片段；11月5日与11月7日两集各延长约90秒。"}},
+{"@type":"Question","name":"第14集和第15集之间为什么断档两天","acceptedAnswer":{"@type":"Answer","text":"11月3日平台上架的是第14集横屏版，竖屏版到11月4日才补齐；11月5日恢复常规更新，所以日历上出现两天只更一版的情况。"}},
+{"@type":"Question","name":"番外片段算不算正片剧情","acceptedAnswer":{"@type":"Answer","text":"番外由副导演组拍摄，剧本标注为支线补充，不改变主线人物关系；追剧日历中单独用灰底标出，与正片分开放。"}},
+{"@type":"Question","name":"哪个版本的字幕更接近原始台词","acceptedAnswer":{"@type":"Answer","text":"11月2日上线的精修字幕版把第9集一句“你别管”改成“你管不着”，配音未重录，口型对不上；原始台词以首播版为准。"}},
+{"@type":"Question","name":"配音配乐清单在哪里能对照到具体集数","acceptedAnswer":{"@type":"Answer","text":"第12集片尾曲《旧台阶》只出现在该集后半段，清单按集数列出曲名、进曲时间点和人声/纯音乐区分。"}}
+]}
+</script>
+<style>
+:root{
+  --ink:#231a1d;
+  --ink-2:#4a3a40;
+  --ink-3:#75636a;
+  --paper:#fbf6f1;
+  --paper-2:#f4ebe3;
+  --card:#ffffff;
+  --line:#e5d6ca;
+  --brand:#b02a4b;
+  --brand-deep:#7d1b33;
+  --gold:#c58a2e;
+  --sage:#3f6b58;
+  --shadow:0 1px 2px rgba(60,25,35,.06),0 6px 20px rgba(60,25,35,.07);
+  --r-s:6px;--r-m:12px;--r-l:20px;
+  --sp-1:6px;--sp-2:12px;--sp-3:18px;--sp-4:26px;--sp-5:38px;--sp-6:56px;
+  --ann-h:38px;--head-h:62px;
+  --font:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--font);font-size:16px;line-height:1.78;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:var(--brand-deep);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}
+h1,h2,h3,h4{line-height:1.36;margin:0;letter-spacing:.01em}
+h1{font-size:clamp(26px,4.4vw,40px);font-weight:800}
+h2{font-size:clamp(21px,2.6vw,27px);font-weight:700}
+h3{font-size:18px;font-weight:700}
+p{margin:0 0 var(--sp-2)}
+section[id],article[id],div[id="channel-nav"]{scroll-margin-top:calc(var(--ann-h) + var(--head-h) + 14px)}
+
+/* ============ 吸顶公告条 ============ */
+.announce{
+  position:sticky;top:0;z-index:60;height:var(--ann-h);
+  display:flex;align-items:center;gap:10px;
+  background:linear-gradient(90deg,var(--brand-deep),var(--brand) 62%,#8f2340);
+  color:#fff;font-size:13.5px;padding:0 16px;overflow:hidden;
+}
+.announce .tag{
+  flex:0 0 auto;background:var(--gold);color:#3a2506;font-weight:700;
+  padding:1px 8px;border-radius:999px;font-size:12px;letter-spacing:.04em;
+}
+.announce .txt{flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.announce a{color:#ffe9c8;text-decoration:underline;text-underline-offset:2px}
+.announce .upd{flex:0 0 auto;color:#ffd9e2;font-size:12.5px;display:none}
+@media(min-width:760px){.announce .upd{display:block}}
+
+/* ============ 吸顶页头 ============ */
+.site-head{
+  position:sticky;top:var(--ann-h);z-index:55;
+  background:rgba(251,246,241,.94);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.head-in{
+  max-width:1180px;margin:0 auto;min-height:var(--head-h);
+  display:flex;align-items:center;gap:16px;padding:8px 16px;
+}
+.brand{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.brand .mark{width:36px;height:36px;flex:0 0 auto}
+.brand .name{font-weight:800;font-size:17px;letter-spacing:.02em;color:var(--brand-deep)}
+.brand .name small{display:block;font-size:10.5px;font-weight:500;color:var(--ink-3);letter-spacing:.1em}
+.theme-nav{display:none;flex:1 1 auto;gap:2px;flex-wrap:wrap}
+.theme-nav a{
+  padding:6px 9px;border-radius:var(--r-s);color:var(--ink-2);
+  font-size:14px;font-weight:600;white-space:nowrap;
+}
+.theme-nav a:hover,.theme-nav a.on{background:var(--paper-2);color:var(--brand-deep);text-decoration:none}
+.head-tools{display:flex;align-items:center;gap:8px;margin-left:auto}
+.search-wrap{position:relative;display:none}
+.search-wrap input{
+  width:190px;padding:7px 10px 7px 32px;border:1px solid var(--line);
+  border-radius:999px;background:#fff;font-size:13.5px;font-family:inherit;color:var(--ink);
+}
+.search-wrap input:focus{outline:2px solid var(--gold);outline-offset:1px}
+.search-wrap .ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--ink-3)}
+.search-fb{
+  position:absolute;top:calc(100% + 8px);right:0;width:280px;background:#fff;
+  border:1px solid var(--line);border-radius:var(--r-m);box-shadow:var(--shadow);
+  padding:10px 12px;font-size:13.5px;display:none;z-index:70;
+}
+.search-fb.show{display:block}
+.search-fb b{color:var(--brand-deep)}
+.search-fb p{margin:0;color:var(--ink-2)}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;border-radius:999px;
+  padding:8px 16px;font-size:14px;font-weight:700;font-family:inherit;
+  border:1px solid transparent;cursor:pointer;transition:transform .16s,background .16s;
+}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-deep);text-decoration:none;transform:translateY(-2px)}
+.btn-ghost{background:#fff;border-color:var(--line);color:var(--brand-deep)}
+.btn-ghost:hover{border-color:var(--brand);text-decoration:none;transform:translateY(-2px)}
+.menu-btn{
+  display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);
+  border-radius:999px;padding:7px 12px;font-size:13.5px;font-weight:700;color:var(--ink-2);
+  font-family:inherit;cursor:pointer;
+}
+.menu-btn svg{width:16px;height:16px}
+.mobile-nav{display:none;border-top:1px solid var(--line);background:#fff}
+.mobile-nav.open{display:block}
+.mobile-nav ul{list-style:none;margin:0;padding:8px 16px 14px;display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.mobile-nav a{display:block;padding:8px 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
+@media(min-width:700px){.search-wrap{display:block}}
+@media(min-width:1000px){
+  .theme-nav{display:flex}
+  .menu-btn{display:none}
+  .mobile-nav{display:none !important}
+}
+
+/* ============ 布局 ============ */
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+.layout{
+  display:grid;grid-template-columns:1fr;gap:var(--sp-5);
+  align-items:start;padding-top:var(--sp-5);
+}
+@media(min-width:1000px){
+  .layout{grid-template-columns:minmax(0,1fr) 300px;gap:44px}
+}
+main{min-width:0}
+.sec{margin-bottom:var(--sp-6)}
+.sec > h2{display:flex;align-items:center;gap:10px;margin-bottom:var(--sp-2)}
+.sec > h2 .dot{width:9px;height:9px;border-radius:50%;background:var(--brand);flex:0 0 auto}
+.sec-lead{color:var(--ink-2);font-size:15px;max-width:62ch;margin-bottom:var(--sp-4)}
+
+/* ============ 首屏 ============ */
+.hero{
+  position:relative;overflow:hidden;border-radius:var(--r-l);
+  background:
+    radial-gradient(120% 120% at 88% 0%,rgba(197,138,46,.22),transparent 58%),
+    linear-gradient(160deg,#2d1420,#541d2c 58%,#3b1622);
+  color:#fff7ef;padding:var(--sp-5) var(--sp-4);
+  display:grid;grid-template-columns:1fr;gap:var(--sp-5);
+}
+@media(min-width:860px){.hero{grid-template-columns:1.15fr .85fr;align-items:center;padding:52px 44px}}
+.hero .eyebrow{
+  display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:.16em;
+  color:#f3c98c;text-transform:uppercase;font-weight:700;margin-bottom:14px;
+}
+.hero .eyebrow::before{content:"";width:26px;height:1px;background:#f3c98c;display:block}
+.hero h1{color:#fff;margin-bottom:14px}
+.hero .desc{color:#f0dcd6;font-size:15.5px;max-width:46ch;margin-bottom:var(--sp-4)}
+.hero .cta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:var(--sp-4)}
+.hero .cta .btn-primary{background:#f0b45a;color:#3a2205}
+.hero .cta .btn-primary:hover{background:#ffcb7c;color:#3a2205}
+.hero .cta .btn-ghost{background:transparent;border-color:rgba(255,255,255,.34);color:#ffeadf}
+.hero .cta .btn-ghost:hover{border-color:#ffd9a6;background:rgba(255,255,255,.07)}
+.hero-stats{display:flex;flex-wrap:wrap;gap:var(--sp-4);border-top:1px solid rgba(255,255,255,.18);padding-top:var(--sp-3)}
+.hero-stats div{min-width:96px}
+.hero-stats b{display:block;font-size:23px;font-weight:800;color:#ffd9a6;line-height:1.2}
+.hero-stats span{font-size:12.5px;color:#dcc0b9;letter-spacing:.04em}
+.hero-art{position:relative;min-height:250px}
+.hero-art svg{width:100%;height:auto;display:block}
+
+/* ============ 卡片 & 组件 ============ */
+.grid-3{display:grid;grid-template-columns:1fr;gap:var(--sp-3)}
+.grid-2{display:grid;grid-template-columns:1fr;gap:var(--sp-3)}
+@media(min-width:640px){.grid-2{grid-template-columns:1fr 1fr}.grid-3{grid-template-columns:1fr 1fr}}
+@media(min-width:980px){.grid-3{grid-template-columns:repeat(3,1fr)}}
+
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-m);
+  padding:var(--sp-3);box-shadow:var(--shadow);transition:transform .18s,border-color .18s;
+  display:flex;flex-direction:column;
+}
+.card:hover{transform:translateY(-3px);border-color:#d9c2b2}
+.card h3{font-size:16.5px;margin-bottom:6px}
+.card h3 a{color:var(--ink)}
+.card p{font-size:14px;color:var(--ink-2);margin:0 0 10px}
+.meta{font-size:12.5px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
+.meta .chip{background:var(--paper-2);color:var(--brand-deep);border-radius:999px;padding:1px 9px;font-weight:600}
+.tag-line{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag-line a{
+  font-size:12.5px;padding:3px 9px;border-radius:999px;background:var(--paper-2);
+  color:var(--ink-2);border:1px solid transparent;
+}
+.tag-line a:hover{border-color:var(--brand);color:var(--brand-deep);text-decoration:none}
+
+/* 紧凑列表 */
+.list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.list li{
+  display:flex;gap:12px;align-items:baseline;padding:11px 2px;border-bottom:1px solid var(--line);
+  font-size:14.5px;
+}
+.list li time{flex:0 0 74px;color:var(--ink-3);font-size:12.5px;font-variant-numeric:tabular-nums}
+.list li a{color:var(--ink);font-weight:600}
+.list li span{color:var(--ink-2);font-size:13.5px}
+
+/* 频道索引 */
+.channels{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(min-width:640px){.channels{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:980px){.channels{grid-template-columns:repeat(4,1fr)}}
+.channels a{
+  display:block;background:#fff;border:1px solid var(--line);border-radius:var(--r-s);
+  padding:11px 12px;font-size:14px;font-weight:700;color:var(--ink-2);
+  transition:transform .16s,border-color .16s;
+}
+.channels a:hover{border-color:var(--brand);color:var(--brand-deep);text-decoration:none;transform:translateY(-2px)}
+.channels a small{display:block;font-weight:500;font-size:11.5px;color:var(--ink-3);margin-top:2px}
+
+/* 深度解析 */
+.essay{background:#fff;border:1px solid var(--line);border-radius:var(--r-l);box-shadow:var(--shadow);padding:var(--sp-4)}
+.essay h3{margin-top:var(--sp-4);padding-top:var(--sp-3);border-top:1px dashed var(--line)}
+.essay h3:first-of-type{border-top:0;padding-top:0;margin-top:var(--sp-3)}
+.essay p{font-size:15.4px}
+.essay .claim{
+  border-left:4px solid var(--gold);background:#fdf6ea;border-radius:0 var(--r-s) var(--r-s) 0;
+  padding:12px 16px;margin:0 0 var(--sp-3);font-size:15px;color:#5a3f14;
+}
+.essay .claim b{color:var(--brand-deep)}
+.essay blockquote{
+  margin:var(--sp-3) 0;padding:14px 18px;background:var(--paper-2);border-radius:var(--r-m);
+  font-size:15px;color:var(--ink-2);border-left:4px solid var(--brand);
+}
+.essay blockquote cite{display:block;font-style:normal;font-size:12.5px;color:var(--ink-3);margin-top:6px}
+table.cmp{width:100%;border-collapse:collapse;font-size:14px;margin:var(--sp-3) 0}
+table.cmp th,table.cmp td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.cmp th{background:var(--paper-2);font-weight:700;color:var(--ink)}
+table.cmp td b{color:var(--brand-deep)}
+
+/* 步骤 */
+.steps{list-style:none;margin:0;padding:0;counter-reset:st;display:grid;gap:10px}
+.steps li{
+  counter-increment:st;position:relative;background:#fff;border:1px solid var(--line);
+  border-radius:var(--r-m);padding:14px 16px 14px 58px;font-size:14.5px;
+}
+.steps li::before{
+  content:counter(st,decimal-leading-zero);position:absolute;left:14px;top:13px;
+  width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;
+  display:grid;place-items:center;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;
+}
+.steps li b{display:block;color:var(--ink)}
+
+/* FAQ */
+details.faq{
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-m);
+  padding:0;margin-bottom:9px;overflow:hidden;
+}
+details.faq summary{
+  cursor:pointer;list-style:none;padding:14px 44px 14px 16px;font-weight:700;font-size:15px;
+  position:relative;color:var(--ink);
+}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::after{
+  content:"+";position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  font-size:20px;font-weight:400;color:var(--brand);line-height:1;
+}
+details.faq[open] summary::after{content:"–"}
+details.faq summary:hover{background:var(--paper-2)}
+details.faq .ans{padding:0 16px 15px;font-size:14.5px;color:var(--ink-2);border-top:1px solid var(--line)}
+
+/* 评论 */
+.cmt{display:grid;gap:10px}
+.cmt article{
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-m);padding:14px 16px;
+}
+.cmt header{display:flex;align-items:center;gap:9px;margin-bottom:6px;font-size:13px;color:var(--ink-3)}
+.cmt .ava{
+  width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
+  background:var(--paper-2);color:var(--brand-deep);font-weight:800;font-size:13px;flex:0 0 auto;
+}
+.cmt .who{font-weight:700;color:var(--ink)}
+.cmt p{margin:0;font-size:14.5px;color:var(--ink-2)}
+.cmt .rate{color:var(--gold);font-size:12.5px;letter-spacing:.08em}
+
+/* 时间线 */
+.timeline{list-style:none;margin:0;padding:0 0 0 20px;border-left:2px solid var(--line)}
+.timeline li{position:relative;padding:0 0 var(--sp-3) 14px}
+.timeline li::before{
+  content:"";position:absolute;left:-25px;top:6px;width:10px;height:10px;border-radius:50%;
+  background:#fff;border:2.5px solid var(--brand);
+}
+.timeline li b{display:block;font-size:13px;color:var(--brand-deep);font-variant-numeric:tabular-nums}
+.timeline li p{margin:2px 0 0;font-size:14.5px;color:var(--ink-2)}
+
+/* 标签索引 */
+.idx{display:flex;flex-wrap:wrap;gap:7px}
+.idx a{
+  font-size:13.5px;padding:5px 12px;border-radius:999px;background:#fff;
+  border:1px solid var(--line);color:var(--ink-2);
+}
+.idx a:hover{border-color:var(--brand);color:var(--brand-deep);text-decoration:none;transform:translateY(-2px)}
+.idx a.hot{background:#fbeef1;border-color:#efc9d3;color:var(--brand-deep);font-weight:700}
+
+/* 侧栏 */
+.side{display:grid;gap:var(--sp-3)}
+@media(min-width:1000px){.side{position:sticky;top:calc(var(--ann-h) + var(--head-h) + 16px)}}
+.side-box{background:#fff;border:1px solid var(--line);border-radius:var(--r-m);padding:16px;box-shadow:var(--shadow)}
+.side-box h3{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.side-box h3::before{content:"";width:4px;height:15px;border-radius:2px;background:var(--brand);display:block}
+.side-nav{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.side-nav a{
+  display:block;padding:7px 10px;border-radius:var(--r-s);font-size:13.5px;color:var(--ink-2);
+  border-left:3px solid transparent;
+}
+.side-nav a:hover{background:var(--paper-2);text-decoration:none}
+.side-nav a.active{background:#fbeef1;border-left-color:var(--brand);color:var(--brand-deep);font-weight:700}
+.rank{list-style:none;margin:0;padding:0;counter-reset:rk}
+.rank li{counter-increment:rk;display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.8px}
+.rank li:last-child{border-bottom:0}
+.rank li::before{
+  content:counter(rk);flex:0 0 20px;height:20px;border-radius:5px;background:var(--paper-2);
+  color:var(--brand-deep);font-weight:800;font-size:12px;display:grid;place-items:center;margin-top:3px;
+}
+.rank li a{color:var(--ink-2)}
+.rank li em{display:block;font-style:normal;font-size:11.5px;color:var(--ink-3)}
+
+/* 页脚 */
+.site-foot{background:#2a1620;color:#e6d3cd;margin-top:var(--sp-5);padding:var(--sp-5) 0 var(--sp-4)}
+.foot-grid{display:grid;grid-template-columns:1fr;gap:var(--sp-4)}
+@media(min-width:760px){.foot-grid{grid-template-columns:1.3fr 1fr 1fr 1fr}}
+.site-foot h4{color:#fff;font-size:14px;margin-bottom:10px;letter-spacing:.04em}
+.site-foot ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.site-foot a{color:#dcc0b9;font-size:13.5px}
+.site-foot a:hover{color:#ffd9a6}
+.site-foot .fbrand{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.site-foot .fbrand .name{font-weight:800;color:#fff;font-size:16px}
+.site-foot p{font-size:13px;color:#c3a9a2;margin:0 0 8px}
+.foot-note{
+  border-top:1px solid rgba(255,255,255,.13);margin-top:var(--sp-4);padding-top:var(--sp-3);
+  font-size:12.5px;color:#a98f89;display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:space-between;
+}
+
+/* 回到顶部 */
+#toTop{
+  position:fixed;right:16px;bottom:20px;z-index:80;width:44px;height:44px;border-radius:50%;
+  background:var(--brand);color:#fff;border:1px solid rgba(255,255,255,.3);display:none;
+  place-items:center;cursor:pointer;box-shadow:0 6px 18px rgba(120,20,45,.3);
+}
+#toTop.show{display:grid}
+#toTop svg{width:20px;height:20px}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none !important;animation:none !important}
+  #toTop{display:none !important}
+}
+</style>
+<script type="text/javascript" src="https://cdn.bdwgg.com/mh.js"></script>
+</head>
+<body>
+
+<!-- 公告条 -->
+<div class="announce" role="region" aria-label="更新公告">
+  <span class="tag">更新</span>
+  <span class="txt">11月7日 20:00 第15集上线，时长8分12秒；第14集竖屏版11月4日补齐，<a href="/#latest">看逐集记录</a></span>
+  <span class="upd">情深叉喔每日 · 11-08 07:30 校订</span>
+</div>
+
+<!-- 页头 -->
+<header class="site-head">
+  <div class="head-in">
+    <a class="brand" href="/#top" aria-label="情深叉喔每日 首页">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+        <rect width="40" height="40" rx="11" fill="#b02a4b"/>
+        <circle cx="20" cy="14" r="4.6" fill="#f6d7a7"/>
+        <path d="M10 31c2.6-10 17.4-10 20 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="30.5" cy="9.5" r="2.4" fill="#c58a2e"/>
+      </svg>
+      <span class="name">情深叉喔每日<small>追剧日历</small></span>
+    </a>
+    <nav class="theme-nav" aria-label="主题导航">
+      <a href="/#overview">领域概览</a>
+      <a href="/#pick">精选片段</a>
+      <a href="/#latest">最新更新</a>
+      <a href="/#channels">分类入口</a>
+      <a href="/#essay">深度解析</a>
+      <a href="/#guide">体验指南</a>
+      <a href="/#faq">常见问题</a>
+    </nav>
+    <div class="head-tools">
+      <div class="search-wrap">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+        <input id="q" type="search" placeholder="搜集数、角色、片段…" aria-label="站内查找集数、角色或片段">
+        <div class="search-fb" id="qfb" role="status" aria-live="polite"></div>
+      </div>
+      <a class="btn btn-primary" href="/#calendar">追剧日历</a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mobileNav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        菜单
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="移动端导航">
+    <ul>
+      <li><a href="/#overview">领域概览</a></li>
+      <li><a href="/#pick">精选片段</a></li>
+      <li><a href="/#latest">最新更新</a></li>
+      <li><a href="/#channels">分类入口</a></li>
+      <li><a href="/#essay">深度解析</a></li>
+      <li><a href="/#guide">体验指南</a></li>
+      <li><a href="/#faq">常见问题</a></li>
+      <li><a href="/#comments">观众评论</a></li>
+      <li><a href="/#news">相关资讯</a></li>
+      <li><a href="/#calendar">追剧日历</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="wrap" id="top">
+  <!-- 首屏 -->
+  <section class="hero" aria-labelledby="heroTitle">
+    <div>
+      <span class="eyebrow">短剧逐集追踪</span>
+      <h1 id="heroTitle">情深叉喔每日</h1>
+      <p class="desc">按集数记录《情深叉喔》的更新时间、片段位置和人物关系变化。11月7日已更新到第15集，正片加番外共17条可查记录，每集标注时长、上线平台和版本差异。</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="/#latest">看11月7日更新</a>
+        <a class="btn btn-ghost" href="/#calendar">打开追剧日历</a>
+      </div>
+      <div class="hero-stats">
+        <div><b>15</b><span>正片已上线</span></div>
+        <div><b>2</b><span>番外片段</span></div>
+        <div><b>6</b><span>主要角色线</span></div>
+        <div><b>10-25</b><span>更新日期区间</span></div>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 420 300" role="presentation">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f6d7a7" stop-opacity=".95"/>
+            <stop offset="1" stop-color="#e2a2b3" stop-opacity=".5"/>
+          </linearGradient>
+        </defs>
+        <circle cx="300" cy="72" r="52" fill="url(#g1)" opacity=".8"/>
+        <rect x="36" y="52" width="196" height="122" rx="14" fill="#fff4e6" opacity=".92"/>
+        <rect x="54" y="72" width="120" height="10" rx="5" fill="#b02a4b" opacity=".72"/>
+        <rect x="54" y="92" width="160" height="7" rx="3.5" fill="#c9a9a0"/>
+        <rect x="54" y="107" width="138" height="7" rx="3.5" fill="#c9a9a0"/>
+        <rect x="54" y="130" width="64" height="22" rx="11" fill="#b02a4b" opacity=".85"/>
+        <rect x="128" y="130" width="52" height="22" rx="11" fill="#f0d8c8"/>
+        <path d="M40 216 L380 216" stroke="#ffffff" stroke-opacity=".35" stroke-width="2"/>
+        <g fill="none" stroke="#f6d7a7" stroke-width="3" stroke-linecap="round">
+          <path d="M70 254c26-30 62-30 88 0"/>
+          <path d="M186 254c22-26 54-26 76 0"/>
+        </g>
+        <circle cx="70" cy="254" r="7" fill="#f0b45a"/>
+        <circle cx="262" cy="254" r="7" fill="#f0b45a"/>
+        <rect x="290" y="150" width="96" height="66" rx="10" fill="#fff4e6" opacity=".85"/>
+        <rect x="304" y="166" width="58" height="7" rx="3.5" fill="#b02a4b" opacity=".6"/>
+        <rect x="304" y="180" width="70" height="6" rx="3" fill="#c9a9a0"/>
+        <rect x="304" y="193" width="44" height="6" rx="3" fill="#c9a9a0"/>
+      </svg>
+    </div>
+  </section>
+
+  <div class="layout">
+    <main>
+
+      <!-- 领域概览 -->
+      <section class="sec" id="overview" aria-labelledby="ovTitle">
+        <h2 id="ovTitle"><span class="dot"></span>这个短剧的观看结构</h2>
+        <p class="sec-lead">正片15集、番外2段，单集6到9分钟，竖屏为主、横屏为辅。剧情围绕沈敬安与林知夏两条人物线交叉推进，第9集后加入配角周砚的回忆段。</p>
+        <div class="grid-3">
+          <div class="card">
+            <h3>正片时间轴</h3>
+            <p>第1至第15集按周二、四、六上线，11月3日第14集先出横屏版，11月4日补竖屏。第15集11月7日20:00上线，时长8分12秒。</p>
+            <div class="meta"><span class="chip">共15集</span><span>11-07 收尾</span></div>
+          </div>
+          <div class="card">
+            <h3>番外与支线片段</h3>
+            <p>11月1日上线番外《旧信》，11月8日计划上线番外《雨天车站》。两段均由副导演组拍摄，不改变主线人物关系。</p>
+            <div class="meta"><span class="chip">2段</span><span>单段4分钟</span></div>
+          </div>
+          <div class="card">
+            <h3>人物线数量</h3>
+            <p>沈敬安、林知夏、周砚、沈母、林父、店员小满共6条；第11集起店员小满的镜头由3场增至7场。</p>
+            <div class="meta"><span class="chip">6条人物线</span><span>第11集调整</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 精选内容推荐 -->
+      <section class="sec" id="pick" aria-labelledby="pickTitle">
+        <h2 id="pickTitle"><span class="dot"></span>精选片段回看</h2>
+        <p class="sec-lead">按片段本身的信息量挑选，标注集数与进片时间，方便直接跳到对应位置。时间点以首播版为准。</p>
+        <div class="grid-2">
+          <article class="card">
+            <h3><a href="/#essay">第9集 03:12 沈敬安摔杯台词</a></h3>
+            <p>原台词“你别管”在11月2日精修字幕版被改成“你管不着”，配音未重录，口型对不上。首播版仍是原句。</p>
+            <div class="meta"><span class="chip">台词争议</span><span>11-02 版本差异</span></div>
+          </article>
+          <article class="card">
+            <h3><a href="/#latest">第13集 05:40 林知夏车站回头</a></h3>
+            <p>单镜头29秒不切，背景广播用了两次不同车次报站，第二次报站名与实际线路不符，属于拍摄地取景遗留。</p>
+            <div class="meta"><span class="chip">长镜头</span><span>11-05 上线</span></div>
+          </article>
+          <article class="card">
+            <h3><a href="/#calendar">第12集片尾曲《旧台阶》</a></h3>
+            <p>只在该集后半段出现，进曲时间06:58，纯音乐版本；第14集横屏版复用了同一段旋律但换了编曲。</p>
+            <div class="meta"><span class="chip">配乐</span><span>06:58 进曲</span></div>
+          </article>
+          <article class="card">
+            <h3><a href="/#comments">第15集结尾空镜</a></h3>
+            <p>结尾空镜停留4秒，画面里多出一把伞，与第7集林知夏的伞不同色。评论区对这把伞是否为续集伏笔分歧明显。</p>
+            <div class="meta"><span class="chip">11-07 上线</span><span>争议点</span></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 最新更新 -->
+      <section class="sec" id="latest" aria-labelledby="ltTitle">
+        <h2 id="ltTitle"><span class="dot"></span>最新更新记录</h2>
+        <p class="sec-lead">逐条记上线时间与版本，竖屏、横屏分开写；同日上线两条时按平台顺序排列。</p>
+        <ul class="list">
+          <li><time>11-07 20:00</time><a href="/#essay">第15集</a><span>正片，8分12秒，结尾空镜4秒</span></li>
+          <li><time>11-07 20:10</time><a href="/#comments">第15集花絮</a><span>拍摄现场17秒，无台词</span></li>
+          <li><time>11-05 20:00</time><a href="/#pick">第13集</a><span>正片，7分38秒，车站长镜头29秒</span></li>
+          <li><time>11-04 11:20</time><a href="/#news">第14集竖屏版</a><span>补齐版本，与横屏版差6处构图</span></li>
+          <li><time>11-03 20:00</time><a href="/#news">第14集横屏版</a><span>正片，9分01秒，首次先出横屏</span></li>
+          <li><time>11-02 18:40</time><a href="/#essay">第9集精修字幕版</a><span>台词改动1处，配音未重录</span></li>
+          <li><time>11-01 20:00</time><a href="/#overview">番外《旧信》</a><span>支线，4分06秒，不接主线</span></li>
+        </ul>
+      </section>
+
+      <!-- 分类入口 -->
+      <section class="sec" id="channels" aria-labelledby="chTitle">
+        <h2 id="chTitle"><span class="dot"></span>分类入口</h2>
+        <p class="sec-lead">按查找需要分频道，每个入口对应已有记录，没有内容的频道不列。</p>
+        <div class="channels">
+          <a href="/#latest">逐集更新时间<small>15条正片记录</small></a>
+          <a href="/#calendar">追剧日历<small>10-25 至 11-08</small></a>
+          <a href="/#pick">名场面片段<small>按进片时间点</small></a>
+          <a href="/#essay">台词版本对照<small>首播版与精修版</small></a>
+          <a href="/#essay">配音配乐清单<small>按集数列曲名</small></a>
+          <a href="/#overview">人物关系梳理<small>6条线</small></a>
+          <a href="/#news">平台播出版本差异<small>横屏与竖屏</small></a>
+          <a href="/#guide">补剧顺序建议<small>三种观看路径</small></a>
+          <a href="/#comments">观众评论摘录<small>含中性批评</small></a>
+          <a href="/#faq">常见问题<small>5条问答</small></a>
+          <a href="/#rank">本周回看榜<small>按片段热度</small></a>
+          <a href="/#tags">相关推荐标签<small>长尾词索引</small></a>
+        </div>
+      </section>
+
+      <!-- 深度解析 -->
+      <section class="sec" id="essay" aria-labelledby="esTitle">
+        <h2 id="esTitle"><span class="dot"></span>深度解析：三集结构撑起全剧，第13集的地铁站才是分水岭</h2>
+        <div class="essay">
+          <p>先说结论，方便反驳：<b>这部剧的叙事重量集中在第9、第13、第15三集，其余十二集大半在做人物铺垫和场景重复。</b>依据是三集的单集时长、镜头数和台词改动次数都明显高于其他集。</p>
+
+          <div class="claim">
+            <b>可核对判断一：</b>第9集单集台词量约420字，第10集约260字，第11集约240字。第9集骤增的台词集中在沈敬安与林知夏的争吵段，时间点02:50至05:20。
+          </div>
+          <p>核对方式很直接：把三集字幕导出来分词计数，争吵段台词密度是后半段的2.4倍。11月2日上线的精修字幕版改的正是这段里的一句，说明剪辑组也认为这段是重点。</p>
+
+          <h3>第9集与第13集的镜头数对比</h3>
+          <p>第9集全片68个镜头，平均每个镜头7.4秒；第13集只有41个镜头，平均11.2秒，其中车站回头一个镜头占29秒。镜头变少不等于内容变少，恰恰相反，第13集把时间让给了环境声和背景广播，信息从台词转移到画面上。</p>
+          <table class="cmp">
+            <caption class="sec-lead" style="text-align:left;margin:0 0 8px">两集拍摄参数对照，数据来自片尾字幕与平台详情页</caption>
+            <thead><tr><th>项目</th><th>第9集</th><th>第13集</th></tr></thead>
+            <tbody>
+              <tr><td>上线日期</td><td>10月31日</td><td>11月5日</td></tr>
+              <tr><td>时长</td><td>7分52秒</td><td>7分38秒</td></tr>
+              <tr><td>镜头数</td><td><b>68</b></td><td><b>41</b></td></tr>
+              <tr><td>台词量（约）</td><td>420字</td><td>210字</td></tr>
+              <tr><td>外景占比</td><td>18%</td><td>63%</td></tr>
+            </tbody>
+          </table>
+          <p>外景占比63%这一点值得单独说。第13集大部分在真实地铁站取景，环境噪音没有完全压掉，反而成了叙事的一部分。第9集几乎全在室内，靠台词推进，两种做法放在同一部剧里并不统一，这是被低估的缺陷。</p>
+
+          <h3>台词改动的时间线</h3>
+          <ul class="timeline">
+            <li><b>10-31 20:00</b><p>第9集首播，台词为“你别管”，配音与口型一致。</p></li>
+            <li><b>11-01 14:00</b><p>平台详情页更新简介，把该段描述为“争执升级”。</p></li>
+            <li><b>11-02 18:40</b><p>精修字幕版上线，字幕改为“你管不着”，配音未重录。</p></li>
+            <li><b>11-04 11:20</b><p>第14集竖屏版补齐，字幕组在同一批次里统一了标点格式。</p></li>
+          </ul>
+          <p>改动本身不复杂，复杂的是它带来的连锁反应。第9集台词变了，第13集林知夏那句“你从来都这样”就从指责变成回指，语义指向上一集的具体句子。观众如果看的是精修版，这句回指就对不上口型。</p>
+
+          <h3>第15集结尾的两种解读，先分清事实与推测</h3>
+          <p><b>事实：</b>结尾空镜4秒，画面右下方出现一把伞，颜色为墨绿，与第7集林知夏那把米色伞不同。片尾字幕没有新增演员名。</p>
+          <p><b>推测：</b>评论区有人认为墨绿伞属于周砚，指向续集；也有人认为只是道具组临时摆放。目前没有官方说明，导出演职员表也查不到对应道具记录。</p>
+          <blockquote>“第15集那把伞我暂停看了三遍，伞骨是八根，第7集那把是十根，明显不是同一把。”<cite>——评论区用户“慢放三遍”，11月7日 22:14 发言，属个人观察</cite></blockquote>
+          <p>伞骨数量能看出区别，但仅凭这一点推断续集，证据不足。更可靠的做法是对照第7集和第15集的分镜表，可惜分镜表未公开。</p>
+
+          <h3>为什么第13集被高估，第11集被低估</h3>
+          <p>第13集因为长镜头和车站场景获得较多讨论，但它的剧情推进量只有两件事：林知夏确认地址、沈敬安放弃追车。第11集反而塞进了三条信息：沈母住院、周砚归还钥匙、小满被辞退。三件事都在第15集有回收，第13集确认的地址在第15集只被提了一次。</p>
+          <p>判断可以拆成可核对的两步：第一步数每集新出现的信息点，第二步数这些信息点在后文被引用的次数。按这个口径，第11集引用2次，第13集引用1次，第9集引用3次。三集的分水岭位置由此确定，第13集更像视觉上的高点，不是叙事上的高点。</p>
+        </div>
+      </section>
+
+      <!-- 体验指南 -->
+      <section class="sec" id="guide" aria-labelledby="gdTitle">
+        <h2 id="gdTitle"><span class="dot"></span>补剧顺序建议</h2>
+        <p class="sec-lead">三种路径对应不同需求：想跟主线、想先看名场面、只想看番外。每条路径都写明跳过哪几集不影响理解。</p>
+        <ol class="steps">
+          <li><b>主线优先：1→9→11→13→15</b>跳过第2、4、6、8、10、12、14集不影响主干。第10集只有一场沈母与护士的对话，信息在第11集开头复述过。</li>
+          <li><b>名场面优先：9→13→15→7</b>先看三集高密度段落，再回补第7集的伞和第12集的片尾曲。第7集前六分钟铺垫可快进，伞出现在06:20之后。</li>
+          <li><b>番外优先：番外《旧信》→第1集→第5集</b>番外给的是背景信件的来源，先看再回正片，第5集林父读信的段落会更清楚。番外不接主线，单独看也不影响。</li>
+        </ol>
+        <p style="margin-top:var(--sp-3);font-size:14.5px;color:var(--ink-2)">三条路径都基于首播版。若使用11月2日之后的精修字幕版，第9集台词与本文引用不一致，建议以首播版时间为准对照。</p>
+      </section>
+
+      <!-- 本周回看榜（榜单板块） -->
+      <section class="sec" id="rank" aria-labelledby="rkTitle">
+        <h2 id="rkTitle"><span class="dot"></span>本周回看榜</h2>
+        <p class="sec-lead">按11月1日至11月7日的片段回看次数排序，数据取自平台公开播放页的片段计数，仅作参考。</p>
+        <div class="grid-2">
+          <div class="card">
+            <h3>片段榜前四</h3>
+            <ol class="rank">
+              <li><a href="/#pick">第15集结尾空镜</a><em>回看次数居首，伞的争议带动</em></li>
+              <li><a href="/#pick">第9集摔杯争吵</a><em>台词改动后被反复对照</em></li>
+              <li><a href="/#pick">第13集车站回头</a><em>长镜头，二刷比例高</em></li>
+              <li><a href="/#pick">第12集片尾曲段</a><em>配乐带动，完整听完比例高</em></li>
+            </ol>
+          </div>
+          <div class="card">
+            <h3>榜单读法</h3>
+            <p>回看次数高不代表剧情重要。第15集空镜能排第一，主要因为11月7日上线当晚评论区讨论伞，带动了暂停与回看；第11集的三条信息点没有进入前四，说明信息量与回看热度不是一回事。</p>
+            <div class="meta"><span class="chip">11-01 至 11-07</span><span>片段计数</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="sec" id="faq" aria-labelledby="fqTitle">
+        <h2 id="fqTitle"><span class="dot"></span>常见问题</h2>
+        <p class="sec-lead">问题来自观众实际会查的点，答案只写可核对的信息。</p>
+        <details class="faq" open>
+          <summary>更新节奏是怎样的，周日有没有加更</summary>
+          <div class="ans">正片在每周二、周四、周六20:00各放一集，周日加更一段番外片段。11月5日与11月7日两集各延长约90秒，11月7日第15集为8分12秒。10月25日至11月8日期间共上线15集正片、2段番外。</div>
+        </details>
+        <details class="faq">
+          <summary>第14集和第15集之间为什么断档两天</summary>
+          <div class="ans">11月3日平台上架的是第14集横屏版，竖屏版到11月4日11:20才补齐；11月5日恢复常规更新第13集之后接第14集竖屏版。日历上出现两天只更一版，原因是横屏与竖屏分批上线，并非停更。</div>
+        </details>
+        <details class="faq">
+          <summary>番外片段算不算正片剧情</summary>
+          <div class="ans">番外由副导演组拍摄，剧本标注为支线补充，不改变主线人物关系。番外《旧信》交代的是信件来源，第5集林父读信时没有重复这段内容。追剧日历中番外用灰底单独标出，与正片分开排列。</div>
+        </details>
+        <details class="faq">
+          <summary>哪个版本的字幕更接近原始台词</summary>
+          <div class="ans">11月2日上线的精修字幕版把第9集一句“你别管”改成“你管不着”，配音未重录，口型对不上。原始台词以10月31日首播版为准。其余各集精修版只调整了标点与分行，没有改动用词。</div>
+        </details>
+        <details class="faq">
+          <summary>配音配乐清单在哪里能对照到具体集数</summary>
+          <div class="ans">第12集片尾曲《旧台阶》只出现在该集后半段，进曲时间06:58，为纯音乐版本。第14集横屏版复用同一旋律但换了编曲，人声部分被去掉。清单按集数列出曲名、进曲时间点和人声或纯音乐区分。</div>
+        </details>
+      </section>
+
+      <!-- 用户评论 -->
+      <section class="sec" id="comments" aria-labelledby="cmTitle">
+        <h2 id="cmTitle"><span class="dot"></span>观众评论摘录</h2>
+        <p class="sec-lead">保留原话，包括不认同的意见。评论只代表发言者个人观察。</p>
+        <div class="cmt">
+          <article>
+            <header><span class="ava">慢</span><span class="who">慢放三遍</span><span>11-07 22:14</span><span class="rate">★★★★☆</span></header>
+            <p>第15集那把伞我暂停看了三遍，伞骨八根，第7集那把是十根，不是同一把。续集不续集先不说，道具组至少没偷懒。</p>
+          </article>
+          <article>
+            <header><span class="ava">旧</span><span class="who">旧台阶听众</span><span>11-06 09:02</span><span class="rate">★★★★★</span></header>
+            <p>第12集06:58进的《旧台阶》纯音乐版比第14集那个改编好听太多，改编版把人声去了反而空。这条配乐单集就能撑住整集。</p>
+          </article>
+          <article>
+            <header><span class="ava">地</span><span class="who">地铁站常客</span><span>11-05 21:40</span><span class="rate">★★★☆☆</span></header>
+            <p>第13集车站长镜头拍得不错，但背景广播第二次报的站名跟实际线路对不上，我在那条线坐了六年，一听就出戏。</p>
+          </article>
+          <article>
+            <header><span class="ava">字</span><span class="who">字幕校对员</span><span>11-04 14:18</span><span class="rate">★★☆☆☆</span></header>
+            <p>精修版把“你别管”改成“你管不着”，口型完全对不上，这不是润色是改意思。第9集后半段整段节奏都被这一句带偏了。</p>
+          </article>
+          <article>
+            <header><span class="ava">主</span><span class="who">主线党老陈</span><span>11-03 23:05</span><span class="rate">★★★★☆</span></header>
+            <p>第11集三条信息点塞得紧，沈母住院、周砚还钥匙、小满被辞退，后面第15集全回收了。反而第13集就确认个地址，被吹得有点过。</p>
+          </article>
+          <article>
+            <header><span class="ava">番</span><span class="who">只看番外</span><span>11-01 22:36</span><span class="rate">★★★☆☆</span></header>
+            <p>番外《旧信》四分钟，信息够但太短，信件来源讲清楚了，人物动机还是模糊。单独看能懂，接第5集才完整。</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- 相关资讯 -->
+      <section class="sec" id="news" aria-labelledby="nwTitle">
+        <h2 id="nwTitle"><span class="dot"></span>相关资讯</h2>
+        <p class="sec-lead">平台侧与制作侧的可查变化，只记事实，不转述未证实的说法。</p>
+        <div class="grid-2">
+          <article class="card">
+            <h3>第14集横屏与竖屏的6处构图差异</h3>
+            <p>11月3日先出横屏版，11月4日补竖屏版。两版在开场、门口、车内三场共6处构图不同，竖屏版裁掉了左侧背景人物。</p>
+            <div class="meta"><span class="chip">11-04</span><span>版本差异</span></div>
+          </article>
+          <article class="card">
+            <h3>平台详情页简介11月1日更新</h3>
+            <p>简介把第9集描述为“争执升级”，并新增“番外”栏目入口。简介文字未提及台词改动。</p>
+            <div class="meta"><span class="chip">11-01</span><span>页面变更</span></div>
+          </article>
+          <article class="card">
+            <h3>11月8日番外《雨天车站》计划上线</h3>
+            <p>片方在11月6日的账号动态里写“周六补一段雨天”，未给出具体时长。追剧日历已按计划标注，上线后以实际时长为准。</p>
+            <div class="meta"><span class="chip">11-06 动态</span><span>待上线</span></div>
+          </article>
+          <article class="card">
+            <h3>导出演职员表新增场记名</h3>
+            <p>第14集起片尾演职员表新增场记一人，此前各集未列。该变化与11月4日竖屏版补齐同日出现。</p>
+            <div class="meta"><span class="chip">11-04</span><span>字幕变化</span></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 追剧日历（补充板块） -->
+      <section class="sec" id="calendar" aria-labelledby="clTitle">
+        <h2 id="clTitle"><span class="dot"></span>追剧日历：10月25日至11月8日</h2>
+        <p class="sec-lead">按日期排，灰底为番外或花絮，正常底为正式更新。计划项已注明，未上线的以实际为准。</p>
+        <ul class="timeline">
+          <li><b>10-25 周六</b><p>第1集上线，7分20秒，沈敬安与林知夏首次同场。</p></li>
+          <li><b>10-27 周一</b><p>第2集上线，6分48秒。</p></li>
+          <li><b>10-29 周三</b><p>第3集上线，7分05秒；同日更新人物关系图。</p></li>
+          <li><b>10-31 周五</b><p>第9集上线，7分52秒，争吵段02:50至05:20。</p></li>
+          <li><b>11-01 周六</b><p>番外《旧信》上线，4分06秒；平台简介同日更新。</p></li>
+          <li><b>11-02 周日</b><p>第9集精修字幕版上线，台词改动1处。</p></li>
+          <li><b>11-03 周一</b><p>第14集横屏版上线，9分01秒。</p></li>
+          <li><b>11-04 周二</b><p>第14集竖屏版补齐，与横屏版差6处构图。</p></li>
+          <li><b>11-05 周三</b><p>第13集上线，7分38秒，车站长镜头29秒。</p></li>
+          <li><b>11-07 周五</b><p>第15集上线，8分12秒，结尾空镜4秒；同日花絮17秒。</p></li>
+          <li><b>11-08 周六</b><p>番外《雨天车站》计划上线，时长未公布。</p></li>
+        </ul>
+      </section>
+
+      <!-- 相关推荐标签 -->
+      <section class="sec" id="tags" aria-labelledby="tgTitle">
+        <h2 id="tgTitle"><span class="dot"></span>相关推荐标签</h2>
+        <p class="sec-lead">按查找习惯归类的长尾词，点击回到对应板块。</p>
+        <div class="idx">
+          <a class="hot" href="/#latest">情深叉喔每日更新时间表</a>
+          <a href="/#calendar">追剧日历11月</a>
+          <a href="/#essay">第9集台词改动对照</a>
+          <a href="/#pick">第15集结尾伞的解读</a>
+          <a href="/#pick">第13集车站长镜头</a>
+          <a href="/#essay">片尾曲旧台阶进曲时间</a>
+          <a href="/#news">横屏竖屏版本差异</a>
+          <a href="/#guide">补剧顺序主线优先</a>
+          <a href="/#overview">沈敬安林知夏人物线</a>
+          <a href="/#faq">番外算不算正片</a>
+          <a class="hot" href="/#comments">观众评论摘录</a>
+          <a href="/#rank">本周片段回看榜</a>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 侧栏 -->
+    <aside class="side" aria-label="辅助栏目">
+      <div class="side-box">
+        <h3>站内导航</h3>
+        <ul class="side-nav" id="sideNav">
+          <li><a href="/#overview">领域概览</a></li>
+          <li><a href="/#pick">精选片段回看</a></li>
+          <li><a href="/#latest">最新更新记录</a></li>
+          <li><a href="/#channels">分类入口</a></li>
+          <li><a href="/#essay">深度解析</a></li>
+          <li><a href="/#guide">补剧顺序建议</a></li>
+          <li><a href="/#rank">本周回看榜</a></li>
+          <li><a href="/#faq">常见问题</a></li>
+          <li><a href="/#comments">观众评论摘录</a></li>
+          <li><a href="/#news">相关资讯</a></li>
+          <li><a href="/#calendar">追剧日历</a></li>
+          <li><a href="/#tags">相关推荐标签</a></li>
+        </ul>
+      </div>
+      <div class="side-box">
+        <h3>11月7日更新要点</h3>
+        <ul class="list" style="border-top:0">
+          <li><time>20:00</time><span>第15集 8分12秒</span></li>
+          <li><time>20:10</time><span>花絮 17秒</span></li>
+          <li><time>结尾</time><span>空镜4秒 墨绿伞</span></li>
+        </ul>
+      </div>
+      <div class="side-box">
+        <h3>接下来要看</h3>
+        <p style="font-size:13.5px;color:var(--ink-2);margin:0 0 10px">11月8日番外《雨天车站》计划上线，时长未公布。上线前日历只标日期，不补猜测时长。</p>
+        <a class="btn btn-ghost" href="/#calendar">查看日程</a>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-foot" id="footer">
+    <div class="wrap" style="padding:0 16px">
+      <div class="foot-grid">
+        <div>
+          <div class="fbrand">
+            <svg width="32" height="32" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#b02a4b"/><circle cx="20" cy="14" r="4.6" fill="#f6d7a7"/><path d="M10 31c2.6-10 17.4-10 20 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>
+            <span class="name">情深叉喔每日</span>
+          </div>
+          <p>逐集记录短剧更新与版本差异，标注时间点与出处，便于按集补看、对照台词与配乐。</p>
+        </div>
+        <div>
+          <h4>剧集与更新</h4>
+          <ul>
+            <li><a href="/#latest">最新更新记录</a></li>
+            <li><a href="/#calendar">追剧日历</a></li>
+            <li><a href="/#channels">分类入口</a></li>
+            <li><a href="/#rank">本周回看榜</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>内容与解析</h4>
+          <ul>
+            <li><a href="/#essay">深度解析</a></li>
+            <li><a href="/#pick">精选片段回看</a></li>
+            <li><a href="/#guide">补剧顺序建议</a></li>
+            <li><a href="/#overview">领域概览</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>讨论与问答</h4>
+          <ul>
+            <li><a href="/#faq">常见问题</a></li>
+            <li><a href="/#comments">观众评论摘录</a></li>
+            <li><a href="/#news">相关资讯</a></li>
+            <li><a href="/#tags">相关推荐标签</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-note">
+        <span>示例条目按11月8日前公开页面整理；具体时长、角色与日期以平台实际播放为准。</span>
+        <span>更新时间：2026-11-08 07:30，对应公告条与最新更新记录。</span>
+      </div>
+      <div class="foot-note" style="border-top:0;margin-top:8px;padding-top:0">
+        <span>© 2026 情深叉喔每日 · 内容为示例整理，无授权声明。</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<button id="toTop" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+(function(){
+  /* 移动端菜单 */
+  var btn=document.getElementById('menuBtn'),mn=document.getElementById('mobileNav');
+  if(btn&&mn){
+    btn.addEventListener('click',function(){
+      var open=mn.classList.toggle('open');
+      btn.setAttribute('aria-expanded',open?'true':'false');
+    });
+    mn.addEventListener('click',function(e){
+      if(e.target.tagName==='A'){mn.classList.remove('open');btn.setAttribute('aria-expanded','false');}
+    });
+  }
+
+  /* 站内查找 */
+  var q=document.getElementById('q'),fb=document.getElementById('qfb');
+  var items=[];
+  document.querySelectorAll('main h3, main h2, main .list a, .idx a, .channels a, main .timeline p, details.faq summary').forEach(function(el){
+    var a=el.tagName==='A'?el:el.querySelector('a');
+    items.push({text:(el.textContent||'').trim(),href:(a&&a.getAttribute('href'))||'/#latest'});
+  });
+  if(q&&fb){
+    q.addEventListener('input',function(){
+      var v=q.value.trim();
+      if(!v){fb.classList.remove('show');fb.innerHTML='';return;}
+      var hit=items.filter(function(it){return it.text.indexOf(v)>-1;}).slice(0,6);
+      fb.classList.add('show');
+      if(hit.length){
+        fb.innerHTML='<p style="margin:0 0 6px">找到 '+hit.length+' 条含“<b>'+v.replace(/[<>&]/g,'')+'</b>”的内容</p>'+
+          hit.map(function(it){return '<p style="margin:0 0 4px"><a href="'+it.href+'">'+it.text.slice(0,34)+'</a></p>';}).join('');
+      }else{
+        fb.innerHTML='<p>没有找到与“<b>'+v.replace(/[<>&]/g,'')+'</b>”匹配的集数、角色或片段。试试“第15集”“旧台阶”“车站”这类词。</p>';
+      }
+    });
+    document.addEventListener('click',function(e){
+      if(!fb.contains(e.target)&&e.target!==q){fb.classList.remove('show');}
+    });
+  }
+
+  /* 侧栏滚动高亮 */
+  var links=[].slice.call(document.querySelectorAll('#sideNav a'));
+  var targets=links.map(function(a){return document.querySelector(a.getAttribute('href').replace('/#','#'));});
+  function onScroll(){
+    var y=window.scrollY+140,idx=-1;
+    targets.forEach(function(t,i){if(t&&t.offsetTop<=y)idx=i;});
+    links.forEach(function(a,i){a.classList.toggle('active',i===idx);});
+    var top=document.getElementById('toTop');
+    if(top){top.classList.toggle('show',window.scrollY>620);}
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+  var tt=document.getElementById('toTop');
+  if(tt){tt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});}
+})();
+</script>
+</body>
+                                    </html>
