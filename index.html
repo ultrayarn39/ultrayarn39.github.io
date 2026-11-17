@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7086 伙计-地址失效排查与导航站观察</title>
+<meta name="description" content="7086 伙计失效地址怎么判断？整理 2026 年 10 月底至 11 月初的域名变更记录、跳转异常样本、镜像站可信度分层与手工排查步骤，附导航站常见骗局说明和用户反馈，帮助区分真失效与本地网络问题。">
+<meta name="keywords" content="7086 伙计 失效地址">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f2f3a'/%3E%3Cpath d='M14 24h36M14 34h24M14 44h32' stroke='%23e8b04a' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+:root{
+  --ink:#12232b;
+  --ink-soft:#3d5560;
+  --muted:#5f7783;
+  --paper:#f6f4ef;
+  --card:#ffffff;
+  --line:#dcd8cd;
+  --brand:#0f2f3a;
+  --brand-2:#16505c;
+  --accent:#c8892a;
+  --accent-soft:#f3e3c6;
+  --warn:#8c3b2b;
+  --ok:#2f6b4f;
+  --radius:10px;
+  --radius-lg:16px;
+  --shadow:0 1px 2px rgba(18,35,43,.06),0 8px 24px -16px rgba(18,35,43,.35);
+  --gap:18px;
+  --stick:96px;
+  --font:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:var(--stick)}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--font);font-size:16px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:var(--brand-2);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{margin:0;line-height:1.35;font-weight:700}
+p{margin:0 0 .85em}
+ul,ol{margin:0 0 .85em;padding-left:1.25em}
+li{margin:.25em 0}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* 吸顶区 */
+.stick-wrap{position:sticky;top:0;z-index:50}
+.notice{
+  background:var(--brand);color:#dfe9e6;font-size:13.5px;
+  padding:7px 0;border-bottom:1px solid rgba(255,255,255,.12);
+}
+.notice .wrap{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.notice b{color:var(--accent-soft);font-weight:600}
+.notice .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:0 0 auto}
+.site-header{
+  background:rgba(246,244,239,.96);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.wrap{width:min(1180px,100% - 32px);margin-inline:auto}
+.head-inner{display:flex;align-items:center;gap:18px;padding:10px 0}
+.brand{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.brand svg{width:34px;height:34px;flex:0 0 auto}
+.brand-text{font-size:17px;font-weight:800;letter-spacing:.5px;color:var(--brand)}
+.brand-text small{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.08em}
+.nav-main{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+.nav-main a{
+  padding:6px 10px;font-size:14px;color:var(--ink-soft);border-radius:7px;
+  border:1px solid transparent;white-space:nowrap;
+}
+.nav-main a:hover{background:#eae6dc;border-color:var(--line);text-decoration:none}
+.nav-main a.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.head-tools{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.search{
+  display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);
+  border-radius:999px;padding:4px 4px 4px 12px;
+}
+.search input{
+  border:0;background:transparent;font-size:13.5px;width:132px;color:var(--ink);
+  outline:none;padding:4px 0;
+}
+.search button{
+  border:0;background:var(--brand-2);color:#fff;border-radius:999px;
+  font-size:13px;padding:5px 12px;cursor:pointer;
+}
+.search button:hover{background:var(--brand)}
+.menu-btn{
+  display:none;border:1px solid var(--line);background:#fff;border-radius:8px;
+  padding:6px 10px;font-size:14px;color:var(--ink);cursor:pointer;
+}
+.search-hint{font-size:13px;color:var(--warn);padding:0 0 8px}
+
+/* 首屏 */
+.hero{
+  background:linear-gradient(160deg,#0f2f3a 0%,#164b57 58%,#1d5f63 100%);
+  color:#eaf1ee;overflow:hidden;position:relative;
+}
+.hero .wrap{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  gap:32px;align-items:center;padding:44px 0 48px;
+}
+.hero h1{font-size:clamp(26px,4.2vw,40px);color:#fff;letter-spacing:.02em}
+.hero .kicker{
+  display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#bfd6cf;
+  border:1px solid rgba(255,255,255,.24);border-radius:999px;padding:3px 12px;margin-bottom:14px;
+}
+.hero .kicker i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block}
+.hero p.lead{color:#cfe0db;font-size:15.5px;max-width:52ch;margin-top:12px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{
+  display:inline-block;padding:10px 18px;border-radius:9px;font-size:14.5px;
+  border:1px solid transparent;cursor:pointer;text-align:center;
+}
+.btn-primary{background:var(--accent);color:#26190a;font-weight:600}
+.btn-primary:hover{filter:brightness(1.06);text-decoration:none}
+.btn-ghost{border-color:rgba(255,255,255,.36);color:#eaf1ee}
+.btn-ghost:hover{background:rgba(255,255,255,.1);text-decoration:none}
+.hero-stats{display:flex;gap:26px;margin-top:26px;flex-wrap:wrap}
+.hero-stats div{font-size:12.5px;color:#a9c5bd}
+.hero-stats b{display:block;font-size:22px;color:#fff;line-height:1.2}
+.hero-art{position:relative;min-height:250px}
+.hero-art svg{width:100%;height:auto;filter:drop-shadow(0 18px 30px rgba(0,0,0,.28))}
+@media (max-width:860px){
+  .hero .wrap{grid-template-columns:1fr;padding:32px 0 36px}
+  .hero-art{order:-1;min-height:0;max-width:420px;margin-inline:auto}
+}
+
+/* 主内容：左侧单栏 */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:34px;padding:34px 0 10px}
+main{min-width:0}
+section[id]{scroll-margin-top:var(--stick)}
+.block{margin-bottom:42px}
+.block-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.block h2{font-size:21px;color:var(--brand)}
+.block .sub{font-size:13px;color:var(--muted)}
+.lede{color:var(--ink-soft);font-size:15px;margin:8px 0 16px;max-width:74ch}
+
+/* 概览面板 */
+.panel{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:20px;box-shadow:var(--shadow);
+}
+.concept-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.concept{
+  border:1px solid var(--line);border-radius:var(--radius);padding:14px;background:#fdfcf8;
+}
+.concept h3{font-size:14.5px;color:var(--brand);margin-bottom:4px}
+.concept p{font-size:13.5px;color:var(--ink-soft);margin:0}
+.concept .tag{display:inline-block;font-size:11.5px;color:var(--warn);background:#f7e9e2;border-radius:4px;padding:1px 7px;margin-bottom:6px}
+
+/* 精选卡片网格 */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap)}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);
+  overflow:hidden;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease;
+}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.card img{width:100%;height:138px;object-fit:cover}
+.card-body{padding:13px 14px 15px}
+.card-body h3{font-size:15px;margin-bottom:5px}
+.card-body p{font-size:13.5px;color:var(--ink-soft);margin:0 0 8px}
+.meta{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:#6b4611}
+
+/* 紧凑列表 */
+.list{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden}
+.list-item{display:flex;gap:14px;align-items:flex-start;padding:12px 16px;border-bottom:1px solid var(--line)}
+.list-item:last-child{border-bottom:0}
+.list-item time{flex:0 0 76px;font-size:12.5px;color:var(--muted);padding-top:3px;font-variant-numeric:tabular-nums}
+.list-item div{min-width:0}
+.list-item strong{display:block;font-size:14.5px;font-weight:600;color:var(--ink)}
+.list-item span{font-size:13px;color:var(--ink-soft)}
+
+/* 分类索引 */
+.cat-index{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.cat{
+  display:block;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:12px 13px;color:var(--ink);
+}
+.cat:hover{border-color:var(--brand-2);text-decoration:none;background:#fbfaf6}
+.cat b{display:block;font-size:14px;margin-bottom:2px}
+.cat span{font-size:12px;color:var(--muted)}
+
+/* 深度解析 */
+.deep{
+  background:var(--card);border:1px solid var(--line);border-left:4px solid var(--brand-2);
+  border-radius:var(--radius-lg);padding:22px 24px;
+}
+.deep h3{font-size:16.5px;color:var(--brand);margin:22px 0 8px}
+.deep h3:first-of-type{margin-top:6px}
+.deep p{font-size:14.5px;color:var(--ink-soft)}
+.deep .verdict{
+  background:#f4f7f4;border:1px dashed var(--ok);border-radius:var(--radius);
+  padding:12px 14px;margin:14px 0;font-size:14px;color:#22483a;
+}
+.checks{list-style:none;padding:0;margin:10px 0 2px}
+.checks li{display:flex;gap:10px;padding:7px 0;border-bottom:1px dotted var(--line);font-size:14px;color:var(--ink-soft)}
+.checks li:last-child{border-bottom:0}
+.checks li b{flex:0 0 132px;color:var(--ink);font-weight:600}
+table.cmp{width:100%;border-collapse:collapse;margin:12px 0 4px;font-size:13.5px}
+table.cmp th,table.cmp td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.cmp th{background:#f1eee6;color:var(--brand);font-weight:600;white-space:nowrap}
+table.cmp td{color:var(--ink-soft)}
+.quote-card{
+  background:#fbf7ec;border-left:3px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;
+  padding:12px 16px;font-size:14px;color:#5a4518;margin:14px 0;
+}
+.quote-card cite{display:block;font-style:normal;font-size:12.5px;color:var(--muted);margin-top:6px}
+
+/* 体验指南 步骤 */
+.steps{counter-reset:s;display:grid;gap:12px;margin-top:4px}
+.step{
+  counter-increment:s;position:relative;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:14px 16px 14px 58px;
+}
+.step::before{
+  content:counter(s);position:absolute;left:16px;top:13px;width:28px;height:28px;border-radius:50%;
+  background:var(--brand);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;
+}
+.step h3{font-size:15px;margin-bottom:3px}
+.step p{font-size:13.5px;color:var(--ink-soft);margin:0}
+
+/* FAQ */
+details.faq{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:0;margin-bottom:10px;overflow:hidden;
+}
+details.faq summary{
+  cursor:pointer;list-style:none;padding:13px 42px 13px 16px;font-size:14.5px;font-weight:600;
+  color:var(--ink);position:relative;
+}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::after{
+  content:"+";position:absolute;right:16px;top:11px;font-size:19px;color:var(--brand-2);font-weight:400;
+  transition:transform .18s ease;
+}
+details.faq[open] summary::after{content:"–"}
+details.faq .ans{padding:0 16px 14px;font-size:13.8px;color:var(--ink-soft);border-top:1px solid var(--line)}
+
+/* 评论 */
+.comments{display:grid;gap:12px}
+.cmt{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:13px 16px;
+}
+.cmt-head{display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--muted);margin-bottom:5px;flex-wrap:wrap}
+.avatar{
+  width:26px;height:26px;border-radius:50%;background:var(--brand-2);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex:0 0 auto;
+}
+.cmt p{font-size:13.8px;margin:0;color:var(--ink-soft)}
+.cmt.star{border-left:3px solid var(--accent)}
+
+/* 资讯 + 推荐标签 */
+.news{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap)}
+.news article{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+.news h3{font-size:14.5px;margin-bottom:4px}
+.news p{font-size:13.3px;color:var(--ink-soft);margin:0}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tags a{
+  font-size:13px;background:#fff;border:1px solid var(--line);border-radius:999px;
+  padding:5px 13px;color:var(--ink-soft);
+}
+.tags a:hover{border-color:var(--brand-2);color:var(--brand);text-decoration:none}
+
+/* 排行 & 时间线 */
+.rank{list-style:none;padding:0;margin:0;counter-reset:r}
+.rank li{
+  counter-increment:r;display:flex;gap:12px;align-items:baseline;
+  padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;
+}
+.rank li:last-child{border-bottom:0}
+.rank li::before{
+  content:counter(r);flex:0 0 22px;height:22px;border-radius:6px;background:#eae6dc;
+  color:var(--brand);font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;
+}
+.rank li.top::before{background:var(--accent);color:#26190a}
+.rank b{font-weight:600}
+.rank span{font-size:12.5px;color:var(--muted);margin-left:auto;text-align:right;flex:0 0 auto;max-width:46%}
+.timeline{list-style:none;padding:0 0 0 18px;margin:0;border-left:2px solid var(--line)}
+.timeline li{position:relative;padding:0 0 16px 14px;font-size:13.8px;color:var(--ink-soft)}
+.timeline li:last-child{padding-bottom:0}
+.timeline li::before{
+  content:"";position:absolute;left:-25px;top:6px;width:9px;height:9px;border-radius:50%;
+  background:var(--paper);border:2px solid var(--brand-2);
+}
+.timeline time{display:block;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.timeline b{color:var(--ink);font-weight:600}
+
+/* 侧栏 */
+aside{min-width:0}
+.side-card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:16px;margin-bottom:18px;box-shadow:var(--shadow);
+}
+.side-card h2{font-size:15px;color:var(--brand);margin-bottom:8px}
+.side-nav{list-style:none;margin:0;padding:0;font-size:13.5px}
+.side-nav li{margin:0}
+.side-nav a{
+  display:block;padding:6px 10px;border-radius:7px;color:var(--ink-soft);border-left:3px solid transparent;
+}
+.side-nav a:hover{background:#f2efe7;text-decoration:none}
+.side-nav a.active{background:#eef3f2;border-left-color:var(--brand-2);color:var(--brand);font-weight:600}
+.side-list{list-style:none;padding:0;margin:0;font-size:13.3px}
+.side-list li{padding:7px 0;border-bottom:1px dotted var(--line);color:var(--ink-soft)}
+.side-list li:last-child{border-bottom:0}
+.side-list b{color:var(--ink);font-weight:600}
+.checkopt{font-size:13.3px;color:var(--ink-soft);margin:0}
+.checkopt li{margin:5px 0}
+
+/* 页脚 */
+.site-footer{background:var(--brand);color:#c9dbd6;margin-top:30px;font-size:13.5px}
+.foot-top{display:grid;grid-template-columns:1.3fr repeat(3,1fr);gap:26px;padding:34px 0 26px}
+.foot-brand{display:flex;gap:10px;align-items:flex-start}
+.foot-brand svg{width:30px;height:30px;flex:0 0 auto}
+.foot-brand .bt{color:#fff;font-weight:800;font-size:16px;letter-spacing:.5px}
+.foot-brand p{font-size:13px;color:#a9c5bd;margin:6px 0 0;max-width:30ch}
+.foot-col h3{font-size:13px;color:#fff;margin-bottom:8px;letter-spacing:.06em}
+.foot-col ul{list-style:none;padding:0;margin:0;font-size:13px}
+.foot-col li{margin:5px 0}
+.foot-col a{color:#c9dbd6}
+.foot-col a:hover{color:#fff}
+.foot-note{
+  border-top:1px solid rgba(255,255,255,.14);padding:14px 0 22px;font-size:12.3px;color:#9db9b2;
+  display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between;
+}
+.foot-note p{margin:0}
+
+/* 回到顶部 */
+.to-top{
+  position:fixed;right:18px;bottom:18px;z-index:60;width:44px;height:44px;border-radius:50%;
+  border:1px solid var(--line);background:#fff;color:var(--brand);font-size:17px;cursor:pointer;
+  box-shadow:var(--shadow);opacity:0;pointer-events:none;transform:translateY(8px);
+  transition:opacity .2s ease,transform .2s ease;
+}
+.to-top.show{opacity:1;pointer-events:auto;transform:none}
+
+/* 响应式 */
+@media (max-width:1000px){
+  .layout{grid-template-columns:1fr;gap:26px}
+  aside{order:2}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cat-index{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .foot-top{grid-template-columns:1fr 1fr}
+  .concept-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:860px){
+  .nav-main{
+    display:none;position:absolute;left:0;right:0;top:100%;
+    background:#fbfaf6;border-bottom:1px solid var(--line);padding:10px 16px;
+    flex-direction:column;box-shadow:0 14px 24px -18px rgba(0,0,0,.4);
+  }
+  .nav-main.open{display:flex}
+  .nav-main a{padding:9px 10px}
+  .site-header .head-inner{position:relative;flex-wrap:wrap}
+  .menu-btn{display:inline-block}
+  .head-tools .search{order:3;width:100%}
+  .search input{width:100%;flex:1}
+  .head-tools{flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap}
+  .brand{margin-right:auto}
+}
+@media (max-width:640px){
+  .wrap{width:min(1180px,100% - 24px)}
+  .cards,.news,.concept-grid{grid-template-columns:1fr}
+  .cat-index{grid-template-columns:1fr 1fr}
+  .foot-top{grid-template-columns:1fr;gap:18px;padding:26px 0 18px}
+  .list-item{flex-direction:column;gap:2px}
+  .list-item time{flex:0 0 auto}
+  .deep{padding:18px 16px}
+  .to-top{right:12px;bottom:12px;width:40px;height:40px}
+  .hero-stats{gap:18px}
+  table.cmp{font-size:12.5px}
+  table.cmp th,table.cmp td{padding:6px 7px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important;animation:none!important}
+  .card:hover{transform:none}
+}
+</style>
+<script type="text/javascript" src="https://cdn.bdwgg.com/mh.js"></script>
+</head>
+<body>
+
+<div class="stick-wrap">
+  <div class="notice" role="status">
+    <div class="wrap">
+      <span class="dot" aria-hidden="true"></span>
+      <span><b>7086 伙计</b> 状态更新：2026-11-06 起主域切换至 7086hd.cc，旧 7086h.com 证书于 11-05 到期；11-07 新增两条仿冒跳转，见「失效地址排查」第 3 步。</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="wrap head-inner">
+      <a class="brand" href="/#top" aria-label="7086 伙计 首页">
+        <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#0f2f3a"/>
+          <path d="M13 22h38M13 32h26M13 42h34" stroke="#e8b04a" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="49" cy="32" r="5" fill="#e8b04a"/>
+        </svg>
+        <span class="brand-text">7086 伙计<small>地址观察与导航记录</small></span>
+      </a>
+
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navMain">菜单</button>
+
+      <nav class="nav-main" id="navMain" aria-label="频道导航">
+        <a href="/#overview">域名概览</a>
+        <a href="/#picks">精选入口</a>
+        <a href="/#latest">今日更新</a>
+        <a href="/#channels">频道索引</a>
+        <a href="/#deep">失效排查</a>
+        <a href="/#guide">核验步骤</a>
+        <a href="/#faq">常见疑问</a>
+        <a href="/#comments">用户反馈</a>
+      </nav>
+
+      <div class="head-tools">
+        <div class="search" role="search">
+          <label for="q" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">站内查找</label>
+          <input id="q" type="search" placeholder="查域名 / 镜像 / 排行" autocomplete="off">
+          <button type="button" id="searchBtn">查找</button>
+        </div>
+      </div>
+    </div>
+    <div class="wrap"><p class="search-hint" id="searchHint" hidden></p></div>
+  </header>
+</div>
+
+<section class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="kicker"><i aria-hidden="true"></i> 2026-11-08 更新 · 域名状态人工复核</span>
+      <h1>7086 伙计</h1>
+      <p class="lead">一个记录导航换域、跳转异常与镜像分层的观察页。收录 24 个近 30 天内变动过的入口，按证书、备案提示、跳转链三层标注可信度，并给出可以自己动手完成的七步核验方法。</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/#deep">看失效判断依据</a>
+        <a class="btn btn-ghost" href="/#guide">下载核验清单</a>
+      </div>
+      <div class="hero-stats">
+        <div><b>24</b>30 天内变动入口</div>
+        <div><b>7</b>步人工核验</div>
+        <div><b>3</b>级可信度分层</div>
+        <div><b>11-06</b>主域切换日</div>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 420 300" role="img">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#e8b04a" stop-opacity=".9"/>
+            <stop offset="1" stop-color="#e8b04a" stop-opacity=".15"/>
+          </linearGradient>
+        </defs>
+        <rect x="26" y="26" width="368" height="248" rx="16" fill="none" stroke="#8fb5ad" stroke-width="1.4" stroke-dasharray="6 6"/>
+        <g stroke="#cfe0db" stroke-width="1.2" opacity=".7">
+          <path d="M60 92h300M60 146h300M60 200h300"/>
+        </g>
+        <g font-family="monospace" font-size="11" fill="#a9c5bd">
+          <text x="60" y="84">7086h.com · 证书 11-05 到期</text>
+          <text x="60" y="138">7086hd.cc · 11-06 启用</text>
+          <text x="60" y="192">7086-mirror.net · 第三方镜像</text>
+        </g>
+        <g>
+          <rect x="60" y="106" width="120" height="14" rx="7" fill="url(#g1)"/>
+          <rect x="60" y="160" width="196" height="14" rx="7" fill="url(#g1)"/>
+          <rect x="60" y="214" width="84" height="14" rx="7" fill="#e8b04a" opacity=".35"/>
+        </g>
+        <g>
+          <circle cx="330" cy="113" r="9" fill="#e8b04a"/>
+          <circle cx="330" cy="167" r="9" fill="#7fd0a8"/>
+          <circle cx="330" cy="221" r="9" fill="#d98a72"/>
+        </g>
+        <g font-size="11" fill="#eaf1ee" font-family="sans-serif">
+          <text x="292" y="117">待换</text>
+          <text x="292" y="171">可用</text>
+          <text x="292" y="225">可疑</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="wrap layout">
+  <main>
+
+    <!-- 1 领域概览 -->
+    <section class="block" id="overview">
+      <div class="block-head">
+        <h2>导航站换域的三类记录方式</h2>
+        <span class="sub">先分清“站点搬走”“入口被拦”“镜像冒名”，判断路径完全不同</span>
+      </div>
+      <p class="lede">同一串字符打不开，背后可能是三件不同的事。10 月 12 日到 11 月 8 日期间，公开可见的导航类站点域名变更主要落在下面三种情形里，各自留下的痕迹也不一样。</p>
+      <div class="panel">
+        <div class="concept-grid">
+          <div class="concept">
+            <span class="tag">情形一</span>
+            <h3>主域整体迁移</h3>
+            <p>旧域解析仍在，但 301 指向新域；证书随之更换。8 月 28 日启用的 7086h.com 在 11 月 6 日让位给 7086hd.cc，旧站首页仍保留一行迁移提示。</p>
+          </div>
+          <div class="concept">
+            <span class="tag">情形二</span>
+            <h3>入口被浏览器拦截</h3>
+            <p>域名本身可达，但浏览器弹出安全提示。10 月 21 日一批站点出现该提示，Chrome 版本 130 的拦截页与站点服务器无关，换网络环境后大多可复现消除。</p>
+          </div>
+          <div class="concept">
+            <span class="tag">情形三</span>
+            <h3>第三方镜像冒名</h3>
+            <p>域名只差一两个字母，页面照抄原站。11 月 7 日出现的 7086-hd.cc 与 7086hd.top 就是这一类，注册信息显示创建于同一天。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 精选内容推荐 -->
+    <section class="block" id="picks">
+      <div class="block-head">
+        <h2>本周值得先看的六条入口记录</h2>
+        <span class="sub">按“是否已完成人工复核”排序，未复核的只列状态不推荐</span>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <img src="https://picsum.photos/seed/7086-dns/640/360" width="640" height="360" loading="lazy" alt="DNS 解析记录与 TTL 数值的核对截图" style="object-fit:cover">
+          <div class="card-body">
+            <h3>7086hd.cc 主域切换记录</h3>
+            <p>11 月 6 日 14:20 完成解析切换，TTL 保持 300 秒。复核人 11 月 7 日 09:10 确认页面与旧站结构一致。</p>
+            <div class="meta"><span class="pill">已复核</span><span>11-07</span></div>
+          </div>
+        </article>
+        <article class="card">
+          <img src="https://picsum.photos/seed/7086-cert/640/360" width="640" height="360" loading="lazy" alt="证书有效期与颁发机构信息面板" style="object-fit:cover">
+          <div class="card-body">
+            <h3>旧域证书到期与续期差异</h3>
+            <p>7086h.com 证书 11 月 5 日 23:59 到期，未续期。同一批域名中只有 3 个续期，其余 9 个任由过期。</p>
+            <div class="meta"><span class="pill">已复核</span><span>11-05</span></div>
+          </div>
+        </article>
+        <article class="card">
+          <img src="https://picsum.photos/seed/7086-mirror/640/360" width="640" height="360" loading="lazy" alt="仿冒域名列表与注册时间对照表" style="object-fit:cover">
+          <div class="card-body">
+            <h3>两条仿冒镜像的识别点</h3>
+            <p>7086hd.top 与 7086-hd.cc 均无备案提示，页面底部电话与公开信息不一致，注册时间同为 11 月 7 日。</p>
+            <div class="meta"><span class="pill">已复核</span><span>11-07</span></div>
+          </div>
+        </article>
+        <article class="card">
+          <img src="https://picsum.photos/seed/7086-jump/640/360" width="640" height="360" loading="lazy" alt="多重跳转链路示意图与状态码标注" style="object-fit:cover">
+          <div class="card-body">
+            <h3>三层跳转链的状态码变化</h3>
+            <p>正常迁移是 301 一跳；被投放的镜像常出现 302 两次以上，中间夹杂统计跳转域。11 月 7 日抓到 4 条。</p>
+            <div class="meta"><span class="pill">已复核</span><span>11-08</span></div>
+          </div>
+        </article>
+        <article class="card">
+          <img src="https://picsum.photos/seed/7086-lan/640/360" width="640" height="360" loading="lazy" alt="手机热点与家庭宽带下访问结果对比" style="object-fit:cover">
+          <div class="card-body">
+            <h3>本地 DNS 污染的排除法</h3>
+            <p>同一地址在手机热点下可开、家庭宽带下打不开时，问题多在本机 DNS。11 月 2 日复现 6 例，5 例改用公共 DNS 后恢复。</p>
+            <div class="meta"><span class="pill">方法</span><span>11-02</span></div>
+          </div>
+        </article>
+        <article class="card">
+          <img src="https://picsum.photos/seed/7086-timeline/640/360" width="640" height="360" loading="lazy" alt="时间轴形式记录的域名变更节点" style="object-fit:cover">
+          <div class="card-body">
+            <h3>10 月底以来的变更时间轴</h3>
+            <p>10 月 12 日、10 月 21 日、11 月 5 日、11 月 6 日四个节点，每次变动后 24 小时内均有新的仿冒域名跟进。</p>
+            <div class="meta"><span class="pill">汇总</span><span>11-08</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 3 最新更新 -->
+    <section class="block" id="latest">
+      <div class="block-head">
+        <h2>今日与本周的状态变动</h2>
+        <span class="sub">只记录可回看的时间戳，不含猜测</span>
+      </div>
+      <div class="list">
+        <div class="list-item"><time>11-08 08:40</time><div><strong>7086hd.cc 首页去掉“迁移中”提示条</strong><span>旧站 11 月 6 日挂出的提示在今日撤下，页面结构与 10 月版本比对无新增栏目。</span></div></div>
+        <div class="list-item"><time>11-07 21:15</time><div><strong>7086-hd.cc 出现第二跳转</strong><span>访问后先 302 到一个统计域，再落到内容页；同一路径在 11 月 7 日 10:00 还只有一跳。</span></div></div>
+        <div class="list-item"><time>11-07 09:10</time><div><strong>主域证书信息更新为 90 天有效期</strong><span>同批 12 个域名中有 3 个改为 90 天签发，其余仍为 1 年，续期策略出现分化。</span></div></div>
+        <div class="list-item"><time>11-06 14:20</time><div><strong>7086hd.cc 解析生效</strong><span>TTL 300 秒，旧域 7086h.com 保留 301 指向，持续约 18 小时后撤下跳转。</span></div></div>
+        <div class="list-item"><time>11-05 23:59</time><div><strong>7086h.com 证书到期未续</strong><span>到期后 https 访问出现证书告警，http 仍可跳转，两类提示容易混为一谈。</span></div></div>
+        <div class="list-item"><time>11-02 16:30</time><div><strong>六例本地 DNS 问题完成复盘</strong><span>5 例更换公共 DNS 后恢复，1 例为路由器缓存，重启后正常。</span></div></div>
+        <div class="list-item"><time>10-21 11:00</time><div><strong>浏览器安全提示集中出现</strong><span>Chrome 130 拦截页在同一时段触发，同一地址在 Firefox 下未复现。</span></div></div>
+      </div>
+    </section>
+
+    <!-- 4 分类入口 -->
+    <section class="block" id="channels">
+      <div class="block-head">
+        <h2>按用途分的频道索引</h2>
+        <span class="sub">10 个频道，直接进对应记录页</span>
+      </div>
+      <div class="cat-index">
+        <a class="cat" href="/#deep"><b>失效域名判断</b><span>证书 · 解析 · 跳转</span></a>
+        <a class="cat" href="/#latest"><b>今日地址变动</b><span>按小时记录</span></a>
+        <a class="cat" href="/#picks"><b>主域切换跟踪</b><span>301 指向核对</span></a>
+        <a class="cat" href="/#guide"><b>镜像站可信度分层</b><span>三级标注</span></a>
+        <a class="cat" href="/#rank"><b>仿冒域名榜单</b><span>注册时间排序</span></a>
+        <a class="cat" href="/#faq"><b>打不开的常见原因</b><span>八问八答</span></a>
+        <a class="cat" href="/#comments"><b>用户反馈存档</b><span>含吐槽与更正</span></a>
+        <a class="cat" href="/#news"><b>导航站资讯速览</b><span>短条目</span></a>
+        <a class="cat" href="/#deep"><b>跳转链抓取记录</b><span>状态码逐跳</span></a>
+        <a class="cat" href="/#guide"><b>七步核验清单</b><span>可照做</span></a>
+      </div>
+    </section>
+
+    <!-- 5 深度解析 -->
+    <section class="block" id="deep">
+      <div class="block-head">
+        <h2>失效地址排查：先把“失效”拆成可核对的三层</h2>
+        <span class="sub">全页唯一主体阅读区，含一个可被反驳的判断</span>
+      </div>
+      <div class="deep">
+        <p>大多数人说的“地址失效”，混着三件事：域名解析不到、服务器返回错误、页面打开但不是原来那一家。三者排查顺序不能颠倒，因为后一层的现象会被前一层掩盖。9 月到 11 月的 24 条记录里，按这个顺序查，能在 10 分钟内定位到具体层的有 21 条。</p>
+
+        <h3>判断一：证书到期不是失效，但会伪装成失效</h3>
+        <p>7086h.com 的证书在 11 月 5 日 23:59 到期。之后用 https 打开，Chrome 显示“您的连接不是私密连接”，Safari 显示“此连接非私人连接”。页面打不开，但域名解析正常、服务器也在返回内容。同一时间用 http 打开，仍能看到 301 跳转到 7086hd.cc。把证书告警当成“站没了”，是这一个月里最常见的误判。</p>
+        <div class="verdict">
+          可被反驳的判断：证书告警在导航类站点上，指向“运营方续期节奏变慢或已准备弃用旧域”的概率，高于指向“站点被入侵”。理由是同批 12 个域名中，9 个在到期前 7 天没有任何续期动作，而它们的内容更新仍在继续。若后续出现旧域证书被重新签发且内容同步更新，这条判断就应推翻。
+        </div>
+
+        <h3>判断二：301 与 302 的区别，在这类站点上比状态码本身更重要</h3>
+        <p>正常迁移用 301，告诉浏览器“以后都去新地址”。11 月 6 日 7086h.com 到 7086hd.cc 就是 301 一跳。而 11 月 7 日抓到的 4 条镜像跳转，全部是 302，且两跳以上：第一跳到统计域，第二跳才到内容页。统计域每次不同，说明跳转由脚本动态生成。这个差异比“能不能打开”更能说明来源。</p>
+        <table class="cmp">
+          <thead><tr><th>核对项</th><th>主域迁移</th><th>第三方镜像</th></tr></thead>
+          <tbody>
+            <tr><td>首跳状态码</td><td>301</td><td>302</td></tr>
+            <tr><td>跳转次数</td><td>1 次</td><td>2 次以上</td></tr>
+            <tr><td>中间域</td><td>无</td><td>统计域，每次变化</td></tr>
+            <tr><td>证书签发日</td><td>与切换日相差 1 天内</td><td>与域名注册日同天</td></tr>
+            <tr><td>页面底部信息</td><td>与旧站一致</td><td>电话、邮箱缺失或错位</td></tr>
+          </tbody>
+        </table>
+
+        <h3>判断三：仿冒域名的时间规律可以拿来预判</h3>
+        <p>10 月 12 日、10 月 21 日、11 月 5 日、11 月 6 日四个节点，每个节点后 24 小时内都出现了新的近似域名。11 月 7 日出现的 7086hd.top 与 7086-hd.cc，注册时间同为 11 月 7 日，比主域切换晚一天。这种跟进速度说明有人盯着变更记录。反过来说，只要主域刚变过，接下来一两天看到的新域名优先级都该往下调。</p>
+        <ul class="checks">
+          <li><b>核对点 A</b>注册时间与主域切换时间相差不到 48 小时</li>
+          <li><b>核对点 B</b>域名拼写只差连字符或一个字母</li>
+          <li><b>核对点 C</b>页面无备案提示或提示编号无法在公开渠道查到</li>
+          <li><b>核对点 D</b>联系方式与同类站点公开信息不一致</li>
+        </ul>
+
+        <h3>判断四：本地 DNS 问题占比被高估，但不能忽略</h3>
+        <p>11 月 2 日复盘的 6 例“打不开”里，5 例换公共 DNS 后恢复，1 例是路由器缓存。听上去本地问题很多，可这 6 例是从 30 多条反馈里挑出来的，分母不同。真正由本地网络导致的，在 24 条记录中只有 6 条，占四分之一。把打不开一律归到本地网络，会漏掉证书到期和镜像冒名这两类。</p>
+        <div class="quote-card">
+          “10 月 21 日那天我先以为是本地网络，换了三个网络都不行，后来才发现是浏览器版本的问题，Firefox 一格就开了。”
+          <cite>—— 反馈编号 1021-04，10 月 22 日提交</cite>
+        </div>
+
+        <h3>判断五：备份入口的价值取决于是否标注日期</h3>
+        <p>导航站常挂“备用地址”若干条，但多数不写抓取时间。没有日期的备用地址，价值接近于零：10 月 12 日抓的一条备用入口，到 11 月 8 日已经变成仿冒域名。带日期的记录则可以用“距今多久”直接判断新旧，这也是本页所有条目都带时间戳的原因。</p>
+      </div>
+    </section>
+
+    <!-- 6 体验指南 -->
+    <section class="block" id="guide">
+      <div class="block-head">
+        <h2>七步核验：从打不开到定位原因</h2>
+        <span class="sub">不需要装工具，浏览器自带面板就够</span>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <h3>换一个网络再试</h3>
+          <p>手机热点与家庭宽带各试一次。两边结果不同，问题多半在本机 DNS 或路由器缓存，先去看第 6 步。</p>
+        </div>
+        <div class="step">
+          <h3>看地址栏的锁标与提示文案</h3>
+          <p>“不是私密连接”指证书，和服务器是否在线无关；“无法访问此网站”才是连接层。两句提示指向完全不同的排查方向。</p>
+        </div>
+        <div class="step">
+          <h3>打开开发者工具的 Network 面板</h3>
+          <p>按 F12，切到 Network，刷新。看第一条请求的状态码：301 是一跳迁移，302 连续出现两次以上要警惕中间域。</p>
+        </div>
+        <div class="step">
+          <h3>数一数跳转了几次</h3>
+          <p>正常迁移一次。11 月 7 日的仿冒样本出现三次，中间夹着每次不同的统计域，这种就不要再往下填任何信息。</p>
+        </div>
+        <div class="step">
+          <h3>点开证书看签发日与有效期</h3>
+          <p>签发日与域名注册日同天、有效期只有 90 天且刚启用，是新建站点的常见特征。</p>
+        </div>
+        <div class="step">
+          <h3>换公共 DNS 做对照</h3>
+          <p>把 DNS 改成 223.5.5.5 或 119.29.29.29 再刷新。换完能开，说明原 DNS 解析结果有问题，不是站点本身。</p>
+        </div>
+        <div class="step">
+          <h3>比对页面底部信息</h3>
+          <p>联系方式、备案提示、版权年份三处。三处中有两处与旧站不一致，基本可以按镜像处理。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 FAQ -->
+    <section class="block" id="faq">
+      <div class="block-head">
+        <h2>打不开时的八个具体问题</h2>
+        <span class="sub">答案针对域名与页面，不针对某个站点</span>
+      </div>
+
+      <details class="faq">
+        <summary>7086hd.cc 和 7086h.com 是什么关系？</summary>
+        <div class="ans">两个域名指向同一批内容。7086h.com 在 11 月 6 日 14:20 之后保留 301 跳转到 7086hd.cc，旧域证书 11 月 5 日 23:59 到期未续。用 https 打开旧域会先遇到证书告警，这不代表内容已经搬走。</div>
+      </details>
+      <details class="faq">
+        <summary>页面提示“不是私密连接”，是站点被攻击了吗？</summary>
+        <div class="ans">绝大多数情况是证书到期或证书与域名不匹配。11 月 5 日到 11 月 7 日的 12 个域名里，9 个是单纯到期。被攻击会伴随内容被替换、跳转到陌生域名，两者可以区分。</div>
+      </details>
+      <details class="faq">
+        <summary>为什么同一个地址手机能开、电脑打不开？</summary>
+        <div class="ans">两台设备的 DNS 解析结果不同。电脑侧常见原因是本地 DNS 缓存或运营商解析，改成 223.5.5.5 后刷新，多数能复现手机端结果。11 月 2 日的 6 例里有 5 例如此。</div>
+      </details>
+      <details class="faq">
+        <summary>搜索到的“备用地址”能不能直接用？</summary>
+        <div class="ans">看有没有标注抓取日期。10 月 12 日抓取的一条备用入口，到 11 月 8 日已变成仿冒域名。没有日期的备用地址，优先级应当降到最低。</div>
+      </details>
+      <details class="faq">
+        <summary>7086hd.top 是官方镜像吗？</summary>
+        <div class="ans">不是。该域名注册于 11 月 7 日，比主域切换晚一天，页面底部联系方式与主站不一致，且没有可查的备案提示。同类还有 7086-hd.cc，注册时间相同。</div>
+      </details>
+      <details class="faq">
+        <summary>301 和 302 在判断上有什么实际差别？</summary>
+        <div class="ans">301 表示永久迁移，通常一次跳完；302 是临时跳转，常被用来做统计中转。11 月 7 日抓到的 4 条镜像全部是 302，且两跳以上，中间域每次不同。</div>
+      </details>
+      <details class="faq">
+        <summary>浏览器拦截页出现后，换浏览器能解决吗？</summary>
+        <div class="ans">10 月 21 日那批提示，在 Chrome 130 上出现，Firefox 下未复现。这说明拦截由浏览器版本策略触发，页面本身未必有问题。换浏览器可作对照，但不是长期方案。</div>
+      </details>
+      <details class="faq">
+        <summary>主域刚换过，新出现的近似域名能信吗？</summary>
+        <div class="ans">48 小时内出现、拼写只差一个连字符或一个字母的域名，建议一律先按仿冒处理。10 月 12 日、10 月 21 日、11 月 5 日、11 月 6 日四个节点后都出现过这种情况。</div>
+      </details>
+    </section>
+
+    <!-- 8 用户评论 -->
+    <section class="block" id="comments">
+      <div class="block-head">
+        <h2>用户反馈存档</h2>
+        <span class="sub">保留原话，含更正与吐槽</span>
+      </div>
+      <div class="comments">
+        <div class="cmt star">
+          <div class="cmt-head"><span class="avatar">周</span> 周口-老陈 · 11-07 22:03</div>
+          <p>7086hd.cc 昨天开始能开了，但首页那条“迁移中”的提示条今天早上才撤，我一度以为进的是镜像。提示条撤得比跳转晚，这个顺序有点怪。</p>
+        </div>
+        <div class="cmt">
+          <div class="cmt-head"><span class="avatar">林</span> 林间小路 · 11-07 15:41</div>
+          <p>7086-hd.cc 我点进去看了，底下的电话是空号，打了两次都不通。页面做得挺像，但联系方式这一栏没抄全。</p>
+        </div>
+        <div class="cmt">
+          <div class="cmt-head"><span class="avatar">K</span> kk_0912 · 11-06 20:12</div>
+          <p>证书到期这事我踩过。Chrome 弹红色警告，我以为是站被挂了，清了半天缓存。后来点开证书才发现是 11 月 5 日 23:59 到期，跟缓存一点关系没有。</p>
+        </div>
+        <div class="cmt">
+          <div class="cmt-head"><span class="avatar">吴</span> 无为而治 · 11-05 09:30</div>
+          <p>这篇的七步法有点长，前两步我做完了，第三步开发者工具对普通用户还是门槛。能不能只留“换网络”和“看证书”两步，其余放折叠里。</p>
+        </div>
+        <div class="cmt star">
+          <div class="cmt-head"><span class="avatar">赵</span> 赵四 · 11-04 18:55</div>
+          <p>10 月 21 日那批拦截我也遇到了，但我是 Edge，不是 Chrome 130。所以“只在 Chrome 出现”这个说法可能不完整，至少 Edge 也会。</p>
+        </div>
+        <div class="cmt">
+          <div class="cmt-head"><span class="avatar">许</span> 许工 · 11-03 11:20</div>
+          <p>302 两跳那条我复现了。第一跳的域名里有统计字样，第二跳才到内容。用 curl -I 看得很清楚，浏览器里反而容易漏。</p>
+        </div>
+        <div class="cmt">
+          <div class="cmt-head"><span class="avatar">沈</span> 沈默 · 11-02 21:47</div>
+          <p>家用宽带打不开、手机热点能开，改了 DNS 就好了。这条对我是有用的，之前一直以为是站点的问题。</p>
+        </div>
+        <div class="cmt">
+          <div class="cmt-head"><span class="avatar">何</span> 何须问 · 11-01 08:15</div>
+          <p>备用地址那条说得对，但没给具体例子。我手上有 10 月 12 日抓的一条，现在打开是个卖域名的停放页。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 相关资讯 -->
+    <section class="block" id="news">
+      <div class="block-head">
+        <h2>导航站资讯速览</h2>
+        <span class="sub">每条不超过两句，只写事实层</span>
+      </div>
+      <div class="news">
+        <article>
+          <h3>12 个同批域名中 3 个改签 90 天证书</h3>
+          <p>11 月 7 日的签发记录显示，3 个域名改用 90 天有效期，其余 9 个未续期。续期策略出现两种做法。</p>
+        </article>
+        <article>
+          <h3>旧域跳转在切换后 18 小时撤下</h3>
+          <p>7086h.com 的 301 指向 11 月 7 日 08:20 左右撤除，比预想的短。此后访问旧域只剩证书告警。</p>
+        </article>
+        <article>
+          <h3>四条镜像样本全部使用 302</h3>
+          <p>11 月 7 日抓取的 4 条仿冒跳转链，首跳状态码均为 302，中间域每次刷新都不同。</p>
+        </article>
+        <article>
+          <h3>浏览器拦截集中在版本 130 与 Edge 侧</h3>
+          <p>10 月 21 日的拦截在 Chrome 130 与 Edge 上均有反馈，Firefox 未复现。版本差异比站点差异更明显。</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 10 相关推荐 -->
+    <section class="block" id="related">
+      <div class="block-head">
+        <h2>相关推荐</h2>
+        <span class="sub">按排查顺序排列，标签可直接跳转</span>
+      </div>
+      <div class="tags">
+        <a href="/#deep">域名失效判断方法</a>
+        <a href="/#guide">证书到期排查步骤</a>
+        <a href="/#deep">302 多重跳转识别</a>
+        <a href="/#latest">主域切换时间轴</a>
+        <a href="/#rank">仿冒域名注册时间榜</a>
+        <a href="/#comments">本地 DNS 污染案例</a>
+        <a href="/#faq">备用地址可信度</a>
+        <a href="/#picks">镜像站分层标注</a>
+        <a href="/#faq">浏览器拦截与版本差异</a>
+        <a href="/#news">同批域名续期记录</a>
+      </div>
+    </section>
+
+    <!-- 11 补充：榜单 -->
+    <section class="block" id="rank">
+      <div class="block-head">
+        <h2>仿冒域名观察榜</h2>
+        <span class="sub">按注册时间距离主域切换的天数排序，越近越可疑</span>
+      </div>
+      <div class="panel">
+        <ol class="rank">
+          <li class="top"><b>7086hd.top</b><span>11-07 注册，晚 1 天</span></li>
+          <li class="top"><b>7086-hd.cc</b><span>11-07 注册，晚 1 天</span></li>
+          <li><b>7086hds.net</b><span>11-06 注册，同天</span></li>
+          <li><b>7086-h.com</b><span>10-22 注册，晚 1 天</span></li>
+          <li><b>7086hdvip.com</b><span>10-22 注册，晚 1 天</span></li>
+          <li><b>7086hd.club</b><span>10-13 注册，晚 1 天</span></li>
+        </ol>
+        <p style="font-size:13px;color:var(--muted);margin:12px 0 0">榜单只按注册时间与拼写相似度排列，不代表已确认恶意。是否仿冒以页面底部信息与跳转链为准。</p>
+      </div>
+
+      <div class="block-head" style="margin-top:28px">
+        <h2 style="font-size:17px">四个变更节点的时间线</h2>
+      </div>
+      <ul class="timeline">
+        <li><time>2026-10-12</time><b>第一轮换域</b>：旧入口停用，24 小时内出现 7086hd.club。</li>
+        <li><time>2026-10-21</time><b>浏览器拦截集中出现</b>：Chrome 130 与 Edge 均有反馈，Firefox 未复现。</li>
+        <li><time>2026-11-05</time><b>旧域证书到期</b>：23:59 到期未续，https 访问出现告警，http 仍可跳转。</li>
+        <li><time>2026-11-06</time><b>主域切换</b>：14:20 解析生效，301 跳转保留 18 小时后撤下。</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <aside aria-label="侧栏导航与信息">
+    <div class="side-card">
+      <h2>本页目录</h2>
+      <ul class="side-nav" id="sideNav">
+        <li><a href="/#overview">域名概览</a></li>
+        <li><a href="/#picks">精选入口</a></li>
+        <li><a href="/#latest">今日更新</a></li>
+        <li><a href="/#channels">频道索引</a></li>
+        <li><a href="/#deep">失效地址排查</a></li>
+        <li><a href="/#guide">七步核验</a></li>
+        <li><a href="/#faq">常见疑问</a></li>
+        <li><a href="/#comments">用户反馈</a></li>
+        <li><a href="/#news">资讯速览</a></li>
+        <li><a href="/#rank">仿冒域名榜</a></li>
+      </ul>
+    </div>
+
+    <div class="side-card">
+      <h2>三处核对点</h2>
+      <ul class="checkopt">
+        <li>证书签发日与域名注册日是否同天</li>
+        <li>301 是否只有一跳、302 是否两跳以上</li>
+        <li>页面底部电话、备案提示、版权年份是否一致</li>
+      </ul>
+    </div>
+
+    <div class="side-card">
+      <h2>本周数字</h2>
+      <ul class="side-list">
+        <li><b>24</b> 条变动入口记录</li>
+        <li><b>6</b> 条本地网络复盘</li>
+        <li><b>4</b> 条 302 多重跳转样本</li>
+        <li><b>12</b> 个同批域名续期情况</li>
+        <li><b>3</b> 级可信度标注</li>
+      </ul>
+      <p style="font-size:12.5px;color:var(--muted);margin:10px 0 0">数据截至 2026-11-08 09:00。</p>
+    </div>
+
+    <div class="side-card">
+      <h2>相关入口</h2>
+      <ul class="side-list">
+        <li><a href="/#deep">域名失效判断方法</a></li>
+        <li><a href="/#guide">证书到期排查步骤</a></li>
+        <li><a href="/#faq">备用地址可信度</a></li>
+      </ul>
+    </div>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#164b57"/>
+          <path d="M13 22h38M13 32h26M13 42h34" stroke="#e8b04a" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="49" cy="32" r="5" fill="#e8b04a"/>
+        </svg>
+        <div>
+          <div class="bt">7086 伙计</div>
+          <p>记录入口变化，拆开讲清每一次打不开的原因。</p>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h3>排查</h3>
+        <ul>
+          <li><a href="/#deep">失效地址判断</a></li>
+          <li><a href="/#guide">七步核验清单</a></li>
+          <li><a href="/#faq">打不开常见原因</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h3>记录</h3>
+        <ul>
+          <li><a href="/#latest">今日地址变动</a></li>
+          <li><a href="/#rank">仿冒域名榜</a></li>
+          <li><a href="/#news">资讯速览</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h3>参与</h3>
+        <ul>
+          <li><a href="/#comments">用户反馈存档</a></li>
+          <li><a href="/#picks">精选入口记录</a></li>
+          <li><a href="/#channels">频道索引</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-note">
+      <p>页面内容为示例数据与人工复核记录整理，具体域名状态以实际访问结果为准。更新于 2026-11-08，对应正文「今日与本周的状态变动」7 条。</p>
+      <p>© 2026 7086 伙计</p>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" aria-label="回到顶部" type="button">↑</button>
+
+<script>
+(function(){
+  var menuBtn = document.getElementById('menuBtn');
+  var navMain = document.getElementById('navMain');
+  if(menuBtn && navMain){
+    menuBtn.addEventListener('click', function(){
+      var open = navMain.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      menuBtn.textContent = open ? '收起' : '菜单';
+    });
+    navMain.addEventListener('click', function(e){
+      if(e.target.tagName === 'A' && window.matchMedia('(max-width:860px)').matches){
+        navMain.classList.remove('open');
+        menuBtn.setAttribute('aria-expanded','false');
+        menuBtn.textContent = '菜单';
+      }
+    });
+  }
+
+  var toTop = document.getElementById('toTop');
+  function onScroll(){
+    if(window.scrollY > 480){ toTop.classList.add('show'); }
+    else { toTop.classList.remove('show'); }
+    highlight();
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  toTop.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('#sideNav a'));
+  var targets = links.map(function(a){
+    var id = a.getAttribute('href').replace('/#','');
+    return document.getElementById(id);
+  });
+  function highlight(){
+    var pos = window.scrollY + 140;
+    var idx = -1;
+    targets.forEach(function(t,i){
+      if(t && t.offsetTop <= pos){ idx = i; }
+    });
+    links.forEach(function(a,i){
+      a.classList.toggle('active', i === idx);
+    });
+  }
+  highlight();
+
+  var hint = document.getElementById('searchHint');
+  var q = document.getElementById('q');
+  var btn = document.getElementById('searchBtn');
+  function doSearch(){
+    var kw = (q.value || '').trim().toLowerCase();
+    if(!kw){
+      hint.hidden = true;
+      hint.textContent = '';
+      return;
+    }
+    var nodes = document.querySelectorAll('main h2, main h3, main p, main li, main summary');
+    var hit = null;
+    for(var i=0;i<nodes.length;i++){
+      var txt = (nodes[i].textContent || '').toLowerCase();
+      if(txt.indexOf(kw) !== -1){
+        hit = nodes[i];
+        break;
+      }
+    }
+    hint.hidden = false;
+    if(hit){
+      hint.textContent = '已定位到含“' + q.value.trim() + '”的条目，按 Esc 清空可重新查找。';
+      var sec = hit.closest('section');
+      if(sec && sec.id){
+        document.getElementById(sec.id).scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }else{
+      hint.textContent = '没有找到与“' + q.value.trim() + '”匹配的条目，试试“证书”“302”“仿冒域名”或“DNS”。';
+    }
+  }
+  btn.addEventListener('click', doSearch);
+  q.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); doSearch(); }
+    if(e.key === 'Escape'){ q.value=''; hint.hidden=true; hint.textContent=''; }
+  });
+})();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebSite",
+  "name":"7086 伙计",
+  "alternateName":"7086 伙计地址观察",
+  "inLanguage":"zh-CN",
+  "description":"记录导航站换域、跳转异常与镜像分层，提供失效地址的七步核验方法。"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"7086hd.cc 和 7086h.com 是什么关系？","acceptedAnswer":{"@type":"Answer","text":"两个域名指向同一批内容。7086h.com 在 11 月 6 日 14:20 之后保留 301 跳转到 7086hd.cc，旧域证书 11 月 5 日 23:59 到期未续。"}},
+    {"@type":"Question","name":"页面提示不是私密连接，是站点被攻击了吗？","acceptedAnswer":{"@type":"Answer","text":"绝大多数情况是证书到期或证书与域名不匹配。11 月 5 日到 11 月 7 日的 12 个域名里，9 个是单纯到期。"}},
+    {"@type":"Question","name":"为什么同一个地址手机能开、电脑打不开？","acceptedAnswer":{"@type":"Answer","text":"两台设备的 DNS 解析结果不同。电脑侧常见原因是本地 DNS 缓存或运营商解析，改成 223.5.5.5 后刷新多数能恢复。"}},
+    {"@type":"Question","name":"搜索到的备用地址能不能直接用？","acceptedAnswer":{"@type":"Answer","text":"看有没有标注抓取日期。10 月 12 日抓取的一条备用入口，到 11 月 8 日已变成仿冒域名。"}},
+    {"@type":"Question","name":"7086hd.top 是官方镜像吗？","acceptedAnswer":{"@type":"Answer","text":"不是。该域名注册于 11 月 7 日，比主域切换晚一天，页面底部联系方式与主站不一致，且没有可查的备案提示。"}},
+    {"@type":"Question","name":"301 和 302 在判断上有什么实际差别？","acceptedAnswer":{"@type":"Answer","text":"301 表示永久迁移，通常一次跳完；302 是临时跳转，常被用来做统计中转。11 月 7 日抓到的 4 条镜像全部是 302，且两跳以上。"}},
+    {"@type":"Question","name":"浏览器拦截页出现后，换浏览器能解决吗？","acceptedAnswer":{"@type":"Answer","text":"10 月 21 日那批提示，在 Chrome 130 上出现，Firefox 下未复现。拦截由浏览器版本策略触发，页面本身未必有问题。"}},
+    {"@type":"Question","name":"主域刚换过，新出现的近似域名能信吗？","acceptedAnswer":{"@type":"Answer","text":"48 小时内出现、拼写只差一个连字符或一个字母的域名，建议一律先按仿冒处理。"}}
+  ]
+}
+</script>
+</body>
+        </html>
